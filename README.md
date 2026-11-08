@@ -158,6 +158,23 @@ As a food lover, I want to see my coverage of the world and of each continent, m
 
 ---
 
+## Local Storage and Authentication (MVP)
+
+Food Passport uses local JSON files for user authentication and passport data storage.
+
+The application supports multiple independent users on a single shared computer. Each user can register, log in, and access their own passport, dish stamps, and bucket list.
+
+- `users.json`: Stores user IDs, usernames, and password hashes.
+- `passports/{userId}.json`: Stores each user's dish stamps and bucket-list items.
+- Each user's data is associated with a unique user ID.
+- Users can only access their own passport through the application.
+
+**Limitations**
+
+- User accounts and passport data are stored locally.
+- Cross-device login and data synchronization are not supported in the MVP.
+- Cloud-based authentication and remote data storage may be considered in future development.
+
 ## Country Mapping Table
 
 A bundled file (`country_mapping.json`) that connects each data source's labels to our country list. It's loaded through a `CountryMappingGateway`, so use cases never see raw labels.
@@ -195,7 +212,7 @@ A bundled file (`country_mapping.json`) that connects each data source's labels 
 
 **Clean Architecture**
 - Each external API sits behind an interface in the use-case layer (`DishGateway`, `CountryGateway`, `GeocodingGateway`, `PlacesGateway`, `CountryMappingGateway`). Interactors never see HTTP or JSON.
-- Persistence goes through `PassportDataAccessInterface`, with two implementations: `FilePassportDAO` (local JSON) and `DBPassportDAO` (the course's user/JSON DB API). This is the Dependency Inversion Principle in action: we can switch storage without touching the use cases.
+- Persistence goes through `PassportDataAccessInterface`, implemented by `FilePassportDAO` using local JSON files. User accounts and passport data are stored locally, with each user's passport associated with a unique user ID. This follows the Dependency Inversion Principle, allowing the storage implementation to be replaced in the future without modifying the core use cases.
 
 **Design patterns with a real job to do**
 - **Adapter:** each gateway translates an external API's format (TheMealDB areas, OSM `cuisine` tags) into our own `Dish`, `Country` and `Restaurant` entities, using the mapping table.
@@ -215,5 +232,10 @@ A bundled file (`country_mapping.json`) that connects each data source's labels 
 - Only Use Case 1 creates stamps. Use Case 4 is discovery only.
 - Badges moved to stretch goals to keep the MVP realistic.
 
-**Open decision for the team**
-- Local JSON only, or the shared DB API (needed for the stretch "compare passports" story)?
+**Decisions made**
+
+- Local JSON is used for both user authentication and passport persistence.
+- The application supports multiple users on a single shared computer.
+- Each user has an independent passport associated with their unique user ID.
+- Cross-device login and data synchronization are outside the scope of the MVP.
+- Cloud-based authentication and remote database integration may be considered as future enhancements.
