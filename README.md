@@ -1,6 +1,6 @@
 # Food Passport 🌍🍽️
 
-*Been, but for food: track every country you've eaten your way through, one dish at a time.*
+*Track every country you've eaten your way through, one dish at a time.*
 
 ## Team Information
 
