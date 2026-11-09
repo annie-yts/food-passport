@@ -122,11 +122,11 @@ As a food lover, I want to see my coverage of the world and of each continent, m
 
 | Team Member | MVP Use Case |
 |-------------|--------------|
-| TBD | Use Case 1: Stamp a Dish |
-| TBD | Use Case 2: View World Map |
-| TBD | Use Case 3: Discover Dishes and Bucket List |
-| TBD | Use Case 4: Find Restaurants Nearby |
-| TBD | Use Case 5: View Stats |
+| Brian Chang | Use Case 1: Stamp a Dish |
+| Zikuo Wang | Use Case 2: View World Map |
+| Siyuan Chen | Use Case 3: Discover Dishes and Bucket List |
+| Annie Shen | Use Case 4: Find Restaurants Nearby |
+| Arnab Karmokar | Use Case 5: View Stats |
 
 *Login/signup (adapted from the course's `ca-user-login` example) is shared scaffolding, not anyone's lead use case. The country mapping table is also shared, since Use Cases 1, 3 and 4 all depend on it.*
 
