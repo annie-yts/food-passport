@@ -42,13 +42,11 @@ As a curious eater, I want to browse dishes from a country I haven't tried and a
 As a student, I want to find restaurants near me that serve a country's food so that I can actually go and try a dish on my bucket list.
 
 ### User Story 5: Stats
-As a food lover, I want to see my coverage of the world and of each continent, my top-rated countries, and which dishes I've had from each country so that I stay motivated to keep exploring.
+As a food lover, I want to see my coverage of the world and of each continent, my top-rated countries, and which dishes I've had from each country, and share a summary of my stats with friends, so that I stay motivated to keep exploring.
 
 ### Stretch User Stories (if time allows)
 - **Badges:** As a user, I want to unlock badges (e.g. "Tried 5 countries in Southeast Asia") so that exploring feels rewarding.
-- **Compare passports:** As a user, I want to compare my map with a friend's and see our "taste overlap" score so that we can plan where to eat together.
 - **Recommend my next country:** As a user, I want the app to suggest a country I haven't tried, based on what I rated highly, so that I'm likely to enjoy it.
-- **Export:** As a user, I want to export my passport as an image so that I can share it.
 
 ---
 
@@ -112,9 +110,11 @@ As a food lover, I want to see my coverage of the world and of each continent, m
 1. User opens the Stats view.
 2. System calculates: countries tried / total, % per continent and subregion, dish stamps per month, and top-rated countries (by average rating).
 3. System shows a **country → dish tree**: each tried country, expandable to the dishes stamped there.
+4. User clicks **Share**. System generates a stats card (username, countries tried, continent coverage, top-rated countries) and saves it as a PNG image that the user can send to friends.
 
 **Alternative flows**
-- New user with no stamps → system shows an empty state with a prompt to stamp a first dish.
+- New user with no stamps → system shows an empty state with a prompt to stamp a first dish. Share is disabled.
+- Image can't be saved (e.g. no write permission) → error is shown and the stats view stays open.
 
 ---
 
@@ -133,6 +133,10 @@ As a food lover, I want to see my coverage of the world and of each continent, m
 ---
 
 ## Entities
+
+**User**
+- `userId: String` (unique, generated at signup), `username: String`, `passwordHash: String`
+- Stored in `users.json`. The plain-text password is never stored.
 
 **Country**
 - `isoCode: String` (ISO 3166-1 alpha-3), `name: String`, `region: String`, `subregion: String`, `flagUrl: String`
@@ -153,7 +157,7 @@ As a food lover, I want to see my coverage of the world and of each continent, m
 - `name: String`, `latitude: double`, `longitude: double`, `cuisineTags: List<String>`, `address: String`
 
 **Passport** (aggregate)
-- `owner: String`, `stamps: List<DishStamp>`, `bucketList: List<BucketListItem>`
+- `userId: String` (links to the owning `User`), `stamps: List<DishStamp>`, `bucketList: List<BucketListItem>`
 - `addStamp(DishStamp)`, `hasTried(String isoCode)`, `stampsFor(String isoCode)`, `countriesTried(): Set<String>`
 
 ---
@@ -226,16 +230,16 @@ A bundled file (`country_mapping.json`) that connects each data source's labels 
 3. **Statistics:** coverage per continent and subregion, rating aggregates, and the country → dish tree.
 4. **Testability:** every interactor can be unit-tested with fake gateways and an in-memory DAO, with no network needed.
 
-**Decisions made (PR #4 review)**
+**Decisions made**
+
+*Stamps and scope*
 - Stamps are **dish stamps**. A country is "tried" if it has at least one dish stamp.
 - Each dish belongs to exactly one country, via the mapping table.
 - Only Use Case 1 creates stamps. Use Case 4 is discovery only.
 - Badges moved to stretch goals to keep the MVP realistic.
+- Sharing is part of Use Case 5 (a stats card saved as an image), replacing the earlier "compare passports" and "export" stretch stories.
 
-**Decisions made**
-
+*Storage and users*
 - Local JSON is used for both user authentication and passport persistence.
-- The application supports multiple users on a single shared computer.
-- Each user has an independent passport associated with their unique user ID.
-- Cross-device login and data synchronization are outside the scope of the MVP.
-- Cloud-based authentication and remote database integration may be considered as future enhancements.
+- The application supports multiple users on a single shared computer, each with an independent passport linked by their unique user ID.
+- Cross-device login and data synchronization are outside the scope of the MVP. Cloud-based authentication and a remote database may be considered as future enhancements.
