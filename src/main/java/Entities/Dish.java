@@ -1,12 +1,12 @@
 package Entities;
 
 public class Dish {
-    private String id;
-    private String name;
-    private String countryCode;
-    private String category;
-    private String thumbnailUrl;
-    private boolean isManual;
+    private final String id;
+    private final String name;
+    private final String countryCode;
+    private final String category;
+    private final String thumbnailUrl;
+    private final boolean isManual;
 
     public Dish(String id, String name, String countryCode,
                 String category, String thumbnailUrl, boolean isManual) {
@@ -30,49 +30,24 @@ public class Dish {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getCountryCode() {
         return countryCode;
     }
 
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
-    }
-
     public String getCategory() {
         return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public String getThumbnailUrl() {
         return thumbnailUrl;
     }
 
-    public void setThumbnailUrl(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
-    }
-
     public boolean isManual() {
         return isManual;
     }
-
-    public void setManual(boolean manual) {
-        isManual = manual;
-    }
-
 
 }
