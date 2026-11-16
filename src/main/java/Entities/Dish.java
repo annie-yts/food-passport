@@ -1,4 +1,4 @@
-package entities;
+package Entities;
 
 public class Dish {
     private final String id;

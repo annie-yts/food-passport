@@ -1,4 +1,4 @@
 package use_case.delete_account;
 
-public class DeleteAccountOutputBoundary {
+public interface DeleteAccountOutputBoundary {
 }

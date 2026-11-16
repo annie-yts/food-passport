@@ -1,4 +1,4 @@
 package use_case.change_password;
 
-public class ChangePasswordInputBoundary {
+public interface ChangePasswordInputBoundary {
 }

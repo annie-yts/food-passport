@@ -1,4 +1,4 @@
 package use_case.login;
 
-public class LoginUserDataAccessInterface {
+public interface LoginUserDataAccessInterface {
 }

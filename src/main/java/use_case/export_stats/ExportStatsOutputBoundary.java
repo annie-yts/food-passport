@@ -1,4 +1,4 @@
 package use_case.export_stats;
 
-public class ExportStatsOutputBoundary {
+public interface ExportStatsOutputBoundary {
 }

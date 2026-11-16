@@ -151,7 +151,7 @@ This use case covers everything tied to the user's account: authentication, acco
 
 ---
 
-## entities
+## Entities
 
 **User**
 - `userId: String` (unique, generated at signup), `username: String`, `passwordHash: String`
@@ -238,7 +238,7 @@ A bundled file (`country_mapping.json`) that connects each data source's labels 
 - Persistence goes through `PassportDataAccessInterface`, implemented by `FilePassportDAO` using local JSON files. User accounts and passport data are stored locally, with each user's passport associated with a unique user ID. This follows the Dependency Inversion Principle, allowing the storage implementation to be replaced in the future without modifying the core use cases.
 
 **Design patterns with a real job to do**
-- **Adapter:** each gateway translates an external API's format (TheMealDB areas, OSM `cuisine` tags) into our own `Dish`, `Country` and `Restaurant` entities, using the mapping table.
+- **Adapter:** each gateway translates an external API's format (TheMealDB areas, OSM `cuisine` tags) into our own `Dish`, `Country` and `Restaurant` Entities, using the mapping table.
 - **Decorator:** `CachingDishGateway` / `CachingPlacesGateway` wrap the real gateways. They cut API calls, respect OSM usage limits, and keep the app usable offline.
 - **Observer:** stamping a dish publishes an event; the map and profile views listen and refresh. (If we reach the badges stretch story, the badge checker listens to the same event.)
 - **Strategy (stretch):** each badge rule is its own class, so adding a badge doesn't touch existing code.

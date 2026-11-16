@@ -1,4 +1,4 @@
-package entities;
+package Entities;
 
 public class User {
     private final String userId;

@@ -1,4 +1,4 @@
 package use_case.view_profile;
 
-public class ViewProfileOutputBoundary {
+public interface ViewProfileOutputBoundary {
 }

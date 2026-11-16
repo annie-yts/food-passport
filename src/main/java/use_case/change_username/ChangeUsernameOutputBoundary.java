@@ -1,4 +1,4 @@
 package use_case.change_username;
 
-public class ChangeUsernameOutputBoundary {
+public interface ChangeUsernameOutputBoundary {
 }

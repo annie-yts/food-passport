@@ -1,4 +1,4 @@
 package use_case.logout;
 
-public class LogoutOutputBoundary {
+public interface LogoutOutputBoundary {
 }

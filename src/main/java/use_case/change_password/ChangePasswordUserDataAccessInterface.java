@@ -1,4 +1,4 @@
 package use_case.change_password;
 
-public class ChangePasswordUserDataAccessInterface {
+public interface ChangePasswordUserDataAccessInterface {
 }
