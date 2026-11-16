@@ -1,7 +1,7 @@
 package Entities;
 
 public class User {
-    private String userId;
+    private final String userId;
     private String userName;
     private String passwordHash;
 
@@ -15,10 +15,6 @@ public class User {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getUserName() {
         return userName;
     }
@@ -27,5 +23,11 @@ public class User {
         this.userName = userName;
     }
 
-    // Haven't created functions for passwordHash yet, since I'm not sure abt the logic of login
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 }
