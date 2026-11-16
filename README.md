@@ -141,9 +141,11 @@ This use case covers everything tied to the user's account: authentication, acco
 |-------------|--------------|
 | Arnab Karmokar | Use Case 1: Account and Profile |
 | Brian Chang | Use Case 2: Stamp a Dish |
-| Siyuan(Andy) Chen | Use Case 3: View World Map |
 | Siyuan(Andy) Chen | Use Case 4: Discover Dishes and Bucket List |
 | Annie Shen | Use Case 5: Find Restaurants Nearby |
+| All members (shared) | Use Case 3: View World Map |
+
+*Use Case 3 has no single lead. The whole team builds it together, and each contribution is tracked through its own branch and PR.*
 
 *Use Case 1 is the largest, since it owns login (adapted from the course's `ca-user-login` example), account settings, the profile, and stats. The country mapping table is shared, since Use Cases 2, 4 and 5 all depend on it.*
 
