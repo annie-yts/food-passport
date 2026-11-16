@@ -10,14 +10,13 @@ public class Dish {
 
     public Dish(String id, String name, String countryCode,
                 String category, String thumbnailUrl, boolean isManual) {
-        /*if (name == null) {
+        if (name == null) {
             throw new NullPointerException("The input dish's name cannot be empty.");
         }
         if (countryCode == null) {
             throw new NullPointerException("The input dish's countryCode cannot be empty.");
         }
 
-         */
         this.id = id;
         this.name = name;
         this.countryCode = countryCode;
