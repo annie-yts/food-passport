@@ -1,4 +1,4 @@
-package interface_adapter.profile;
+package interface_adapter.logout;
 
 public class LogoutPresenter {
 }
