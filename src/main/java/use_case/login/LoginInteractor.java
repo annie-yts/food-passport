@@ -1,4 +1,41 @@
 package use_case.login;
 
-public class LoginInteractor {
+import Entities.User;
+
+/*
+ * Adapted from the CSC207 ca-login example:
+ * https://github.com/annie-yts/ca-login
+ * Changes: uses Entities.User (getUserName instead of getName);
+ * one generic error message for a wrong username or password.
+ */
+
+/**
+ * The Login Interactor.
+ */
+public class LoginInteractor implements LoginInputBoundary {
+    private final LoginUserDataAccessInterface userDataAccessObject;
+    private final LoginOutputBoundary loginPresenter;
+
+    public LoginInteractor(LoginUserDataAccessInterface userDataAccessInterface,
+                           LoginOutputBoundary loginOutputBoundary) {
+        this.userDataAccessObject = userDataAccessInterface;
+        this.loginPresenter = loginOutputBoundary;
+    }
+
+    @Override
+    public void execute(LoginInputData loginInputData) {
+        final String username = loginInputData.getUsername();
+        final String password = loginInputData.getPassword();
+        if (!userDataAccessObject.existsByName(username)
+                || !password.equals(userDataAccessObject.get(username).getPassword())) {
+            loginPresenter.prepareFailView("Incorrect username or password.");
+        }
+        else {
+            final User user = userDataAccessObject.get(username);
+            userDataAccessObject.setCurrentUsername(username);
+
+            final LoginOutputData loginOutputData = new LoginOutputData(user.getUserName());
+            loginPresenter.prepareSuccessView(loginOutputData);
+        }
+    }
 }
