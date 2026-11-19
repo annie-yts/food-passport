@@ -1,17 +1,24 @@
 package view;
+import interface_adapter.DataAccessBoundary;
 import interface_adapter.DiscoverDishesViewModel;
 import interface_adapter.DiscoverDishesViewModelListener;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Font;
+import java.text.Collator;
+import java.util.Arrays;
+import java.util.Locale;
 
 /* The View when user discover dishes*/
-public class DiscoverDishesView extends JPanel implements ActionListener, DiscoverDishesViewModelListener {
+public class DiscoverDishesView extends JPanel implements DiscoverDishesViewModelListener {
+
     private final DiscoverDishesViewModel discoverDishesViewModel;
     private final JTextField dishInputField = new JTextField(15);
 //    private SignupController signupController = null;
@@ -22,8 +29,13 @@ public class DiscoverDishesView extends JPanel implements ActionListener, Discov
     private final JButton viewRestaurants;
     private final JButton selectCountry;
 
+    //modules for data access
+    private final DataAccessBoundary dataAccessObject;
 
-    public DiscoverDishesView(DiscoverDishesViewModel discoverDishesViewModel) {
+
+    public DiscoverDishesView(DiscoverDishesViewModel discoverDishesViewModel, DataAccessBoundary dataAccessObject) {
+
+        this.dataAccessObject = dataAccessObject;
 
         this.discoverDishesViewModel = discoverDishesViewModel;
         discoverDishesViewModel.addListener(this);
@@ -36,11 +48,45 @@ public class DiscoverDishesView extends JPanel implements ActionListener, Discov
         // Creates the search panel
         JPanel searchPanel = new JPanel();
         JTextField inputDish = new JTextField(11);
-        inputDish.setText("or search by dish...");
+        inputDish.setText("or enter a dish:");
         selectCountry = new JButton(DiscoverDishesViewModel.COUNTRY_LABEL);
+        searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
+
+        //create the pop manu for countries
+        JPopupMenu popupCountries = new JPopupMenu();
+        JList<String> countryList = new JList<>(dataAccessObject.getCountry());
+        countryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrollPane = new JScrollPane(countryList);
+        scrollPane.setPreferredSize(new Dimension(250, 300));
+        popupCountries.add(scrollPane);
+
+        //add the pop menu into selectCountry
+        selectCountry.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        popupCountries.show(selectCountry, 0, selectCountry.getHeight());
+                    }
+                }
+        );
+
+        // let the countryList being selectable
+        countryList.addListSelectionListener(
+                new ListSelectionListener() {
+                    @Override
+                    public void valueChanged(ListSelectionEvent e) {
+                        String country = countryList.getSelectedValue();
+                        if (country != null) {
+                            selectCountry.setText(country);
+                            popupCountries.setVisible(false);
+                        }
+                    }
+                }
+                );
+
         searchPanel.add(selectCountry);
         searchPanel.add(inputDish);
-        searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
+
+
         // Places the search panel in the top right corner of the frame
         searchPanel.setBounds(600, 50, 260, 30);
         // Just for adjustments, visible the frame of panel
@@ -63,28 +109,27 @@ public class DiscoverDishesView extends JPanel implements ActionListener, Discov
         tryPanel.add(viewMyBucketList);
         viewRestaurants = new JButton(DiscoverDishesViewModel.NEARBY_RESTAURANT_LABEL);
         tryPanel.add(viewRestaurants);
-        // set try panel to the bottom left corner
+        // set try panel to the bottom right corner
         tryPanel.setBounds(500, 500, 380, 40);
         // Just for adjustments, visible the frame of panel
 //        tryPanel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
 
-        //建立布局
+        // CreateLayout
         this.setLayout(null);
         this.add(title);
         this.add(searchPanel);
         this.add(paginationPanel);
         this.add(tryPanel);
 
+
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        return;
-    };
 
     @Override
     public void stateChanged() {
         return;
     }
+
+
 
 }

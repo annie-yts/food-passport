@@ -4,67 +4,30 @@ package interface_adapter;
  * The state for the DiscoverDishesViewModel.
  */
 public class DiscoverDishesState {
-    private String username = "";
-    private String usernameError;
-    private String password = "";
-    private String passwordError;
-    private String repeatPassword = "";
-    private String repeatPasswordError;
+    private String searchTarget;
+    private int page;
 
-    public String getUsername() {
-        return username;
+    public String getSearchTarget() {
+        return searchTarget;
     }
 
-    public String getUsernameError() {
-        return usernameError;
+    public void setSearchTarget(String searchTarget) {
+        this.searchTarget = searchTarget;
     }
 
-    public String getPassword() {
-        return password;
+    public int getPage() {
+        return page;
     }
 
-    public String getPasswordError() {
-        return passwordError;
-    }
-
-    public String getRepeatPassword() {
-        return repeatPassword;
-    }
-
-    public String getRepeatPasswordError() {
-        return repeatPasswordError;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setUsernameError(String usernameError) {
-        this.usernameError = usernameError;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setPasswordError(String passwordError) {
-        this.passwordError = passwordError;
-    }
-
-    public void setRepeatPassword(String repeatPassword) {
-        this.repeatPassword = repeatPassword;
-    }
-
-    public void setRepeatPasswordError(String repeatPasswordError) {
-        this.repeatPasswordError = repeatPasswordError;
+    public void setPage(int page) {
+        this.page = page;
     }
 
     @Override
     public String toString() {
         return "SignupState{"
-                + "username='" + username + '\''
-                + ", password='" + password + '\''
-                + ", repeatPassword='" + repeatPassword + '\''
+                + "searchTarget='" + searchTarget + '\''
+                + ", page='" + page + '\''
                 + '}';
     }
 }
