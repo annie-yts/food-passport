@@ -1,13 +1,12 @@
 package view;
 import data_access.TheMealDBClient;
-import interface_adapter.ApiAccessBoundary;
+import interface_adapter.DiscoverDishesController;
+import use_case.ApiAccessBoundary;
 import interface_adapter.DiscoverDishesViewModel;
 import interface_adapter.DiscoverDishesViewModelListener;
 import interface_adapter.DiscoverDishesState;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -20,15 +19,15 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
 
     private final DiscoverDishesViewModel discoverDishesViewModel;
     private final JTextField dishInputField = new JTextField(12);
-//    private SignupController signupController = null;
+    private DiscoverDishesController discoverDishesController = null;
 
     private final JButton prevPage;
     private final JButton nextPage;
     private final JButton viewMyBucketList;
     private final JButton viewRestaurants;
     private final JButton selectCountry;
-    private final JButton search;
 
+    private final JButton search;
 
     //modules for data access
     private final ApiAccessBoundary apiAccessObject;
@@ -105,6 +104,11 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
                             currentState.setSearchByDish(true);
                             discoverDishesViewModel.setState(currentState);
                         }
+                        DiscoverDishesState currentState = discoverDishesViewModel.getState();
+                        discoverDishesController.execute(
+                                currentState.getSearchTarget(),
+                                currentState.getSearchByDish(),
+                                currentState.getPage());
                         
                     }
                 }
@@ -156,6 +160,9 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
         return;
     }
 
+    public void setDiscoverDishesController(DiscoverDishesController discoverDishesController) {
+        this.discoverDishesController = discoverDishesController;
+    }
 
     //temporary place main method here to build the view quickly
     public static void main(String[] args) {
