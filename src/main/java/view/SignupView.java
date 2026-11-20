@@ -15,7 +15,8 @@ import java.awt.event.ActionListener;
 /*
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
- * Changes: Enter key signs up; screen clears after sign up
+ * Changes: Enter key signs up; screen clears after sign up; removed the unimplemented Cancel button;
+ * Sign Up button before Go to Log In.
  */
 
 /**
@@ -30,7 +31,6 @@ public class SignupView extends JPanel implements ActionListener, SignupViewMode
     private SignupController signupController = null;
 
     private final JButton signUp;
-    private final JButton cancel;
     private final JButton toLogin;
 
     public SignupView(SignupViewModel signupViewModel) {
@@ -48,12 +48,10 @@ public class SignupView extends JPanel implements ActionListener, SignupViewMode
                 new JLabel(SignupViewModel.REPEAT_PASSWORD_LABEL), repeatPasswordInputField);
 
         final JPanel buttons = new JPanel();
-        toLogin = new JButton(SignupViewModel.TO_LOGIN_BUTTON_LABEL);
-        buttons.add(toLogin);
         signUp = new JButton(SignupViewModel.SIGNUP_BUTTON_LABEL);
         buttons.add(signUp);
-        cancel = new JButton(SignupViewModel.CANCEL_BUTTON_LABEL);
-        buttons.add(cancel);
+        toLogin = new JButton(SignupViewModel.TO_LOGIN_BUTTON_LABEL);
+        buttons.add(toLogin);
 
         signUp.addActionListener(
                 // This creates an anonymous subclass of ActionListener and instantiates it.
@@ -79,8 +77,6 @@ public class SignupView extends JPanel implements ActionListener, SignupViewMode
                     }
                 }
         );
-
-        cancel.addActionListener(this);
 
         addUsernameListener();
         addPasswordListener();
@@ -180,7 +176,6 @@ public class SignupView extends JPanel implements ActionListener, SignupViewMode
 
     @Override
     public void actionPerformed(ActionEvent evt) {
-        JOptionPane.showMessageDialog(this, "Cancel not implemented yet.");
     }
 
     @Override
