@@ -4,8 +4,9 @@ import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInputData;
 
 /*
- * Copied from the CSC207 ca-login example (Fall 2025 lab version):
+ * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
+ * Changes: added switchToSignupView().
  */
 
 /**
@@ -29,5 +30,12 @@ public class LoginController {
                 username, password);
 
         loginUseCaseInteractor.execute(loginInputData);
+    }
+
+    /**
+     * Executes the "switch to SignupView" Use Case.
+     */
+    public void switchToSignupView() {
+        loginUseCaseInteractor.switchToSignupView();
     }
 }

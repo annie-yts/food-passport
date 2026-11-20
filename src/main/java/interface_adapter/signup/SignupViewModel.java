@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
- * Copied from the CSC207 ca-login example (Fall 2025 lab version):
+ * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
+ * Changes: capitalised button labels.
  */
 
 /**
@@ -18,10 +19,10 @@ public class SignupViewModel {
     public static final String PASSWORD_LABEL = "Choose password";
     public static final String REPEAT_PASSWORD_LABEL = "Enter password again";
 
-    public static final String SIGNUP_BUTTON_LABEL = "Sign up";
+    public static final String SIGNUP_BUTTON_LABEL = "Sign Up";
     public static final String CANCEL_BUTTON_LABEL = "Cancel";
 
-    public static final String TO_LOGIN_BUTTON_LABEL = "Go to Login";
+    public static final String TO_LOGIN_BUTTON_LABEL = "Go to Log In";
 
     private final List<SignupViewModelListener> listeners = new ArrayList<>();
 

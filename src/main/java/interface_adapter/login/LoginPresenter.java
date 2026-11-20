@@ -5,11 +5,13 @@ import interface_adapter.profile.ProfileState;
 import interface_adapter.profile.ProfileViewModel;
 import use_case.login.LoginOutputBoundary;
 import use_case.login.LoginOutputData;
+import interface_adapter.signup.SignupViewModel;
 
 /*
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
- * Changes: switches to the Profile view instead of LoggedIn.
+ * Changes: switches to the Profile view instead of LoggedIn;
+ * adds switchToSignupView().
  */
 
 /**
@@ -50,5 +52,11 @@ public class LoginPresenter implements LoginOutputBoundary {
         final LoginState loginState = loginViewModel.getState();
         loginState.setLoginError(error);
         loginViewModel.notifyStateChanged();
+    }
+
+    @Override
+    public void switchToSignupView() {
+        viewManagerModel.setState(SignupViewModel.VIEW_NAME);
+        viewManagerModel.notifyViewChanged();
     }
 }

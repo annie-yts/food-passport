@@ -13,8 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /*
- * Copied from the CSC207 ca-login example (Fall 2025 lab version):
+ * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
+ * Changes: replaced the unused cancel button with a "Go to Sign Up" button; capitalised button labels.
  */
 
 /**
@@ -30,7 +31,7 @@ public class LoginView extends JPanel implements ActionListener, LoginViewModelL
     private final JPasswordField passwordInputField = new JPasswordField(15);
 
     private final JButton logIn;
-    private final JButton cancel;
+    private final JButton toSignup;
     private LoginController loginController = null;
 
     public LoginView(LoginViewModel loginViewModel) {
@@ -47,10 +48,10 @@ public class LoginView extends JPanel implements ActionListener, LoginViewModelL
                 new JLabel("Password"), passwordInputField);
 
         final JPanel buttons = new JPanel();
-        logIn = new JButton("log in");
+        logIn = new JButton("Log In");
         buttons.add(logIn);
-        cancel = new JButton("cancel");
-        buttons.add(cancel);
+        toSignup = new JButton("Go to Sign Up");
+        buttons.add(toSignup);
 
         logIn.addActionListener(
                 new ActionListener() {
@@ -67,7 +68,7 @@ public class LoginView extends JPanel implements ActionListener, LoginViewModelL
                 }
         );
 
-        cancel.addActionListener(this);
+        toSignup.addActionListener(evt -> loginController.switchToSignupView());
 
         usernameInputField.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -131,7 +132,6 @@ public class LoginView extends JPanel implements ActionListener, LoginViewModelL
      * @param evt the ActionEvent to react to
      */
     public void actionPerformed(ActionEvent evt) {
-        System.out.println("Click " + evt.getActionCommand());
     }
 
     @Override

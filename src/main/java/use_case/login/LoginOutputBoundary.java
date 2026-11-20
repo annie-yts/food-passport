@@ -1,8 +1,9 @@
 package use_case.login;
 
 /*
- * Copied from the CSC207 ca-login example (Fall 2025 lab version):
+ * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
+ * Changes: added switchToSignupView().
  */
 
 /**
@@ -20,4 +21,9 @@ public interface LoginOutputBoundary {
      * @param errorMessage the explanation of the failure
      */
     void prepareFailView(String errorMessage);
+
+    /**
+     * Switches to the Sign Up View.
+     */
+    void switchToSignupView();
 }

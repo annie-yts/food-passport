@@ -6,7 +6,8 @@ import Entities.User;
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
  * Changes: uses Entities.User (getUserName instead of getName);
- * one generic error message for a wrong username or password.
+ * one generic error message for a wrong username or password;
+ * added switchToSignupView().
  */
 
 /**
@@ -37,5 +38,10 @@ public class LoginInteractor implements LoginInputBoundary {
             final LoginOutputData loginOutputData = new LoginOutputData(user.getUserName());
             loginPresenter.prepareSuccessView(loginOutputData);
         }
+    }
+
+    @Override
+    public void switchToSignupView() {
+        loginPresenter.switchToSignupView();
     }
 }
