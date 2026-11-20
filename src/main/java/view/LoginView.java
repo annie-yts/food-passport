@@ -15,7 +15,8 @@ import java.awt.event.ActionListener;
 /*
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
- * Changes: replaced the unused cancel button with a "Go to Sign Up" button; capitalised button labels.
+ * Changes: replaced the unused cancel button with a "Go to Sign Up" button; capitalised button labels;
+ * Enter key logs in.
  */
 
 /**
@@ -69,6 +70,9 @@ public class LoginView extends JPanel implements ActionListener, LoginViewModelL
         );
 
         toSignup.addActionListener(evt -> loginController.switchToSignupView());
+        // Pressing Enter in either field clicks Log In
+        usernameInputField.addActionListener(evt -> logIn.doClick());
+        passwordInputField.addActionListener(evt -> logIn.doClick());
 
         usernameInputField.getDocument().addDocumentListener(new DocumentListener() {
 

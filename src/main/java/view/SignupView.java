@@ -13,8 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /*
- * Copied from the CSC207 ca-login example (Fall 2025 lab version):
+ * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
+ * Changes: Enter key signs up.
  */
 
 /**
@@ -92,6 +93,11 @@ public class SignupView extends JPanel implements ActionListener, SignupViewMode
         this.add(passwordInfo);
         this.add(repeatPasswordInfo);
         this.add(buttons);
+
+        // Pressing Enter in any field clicks Sign Up
+        usernameInputField.addActionListener(evt -> signUp.doClick());
+        passwordInputField.addActionListener(evt -> signUp.doClick());
+        repeatPasswordInputField.addActionListener(evt -> signUp.doClick());
     }
 
     private void addUsernameListener() {
