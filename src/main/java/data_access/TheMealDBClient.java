@@ -11,7 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import interface_adapter.ApiAccessBoundary;
+import use_case.ApiAccessBoundary;
 import entities.Dish;
 import entities.DishFactory;
 
