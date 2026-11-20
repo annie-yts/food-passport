@@ -33,7 +33,8 @@ import java.awt.*;
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
  * Changes: uses Entities.UserFactory; LoggedIn view replaced by ProfileView;
- * users saved to data/users.csv; change password to be added with that use case.
+ * users saved to data/users.csv; change password to be added with that use case;
+ * opens on the Log In screen.
  */
 
 /**
@@ -126,7 +127,7 @@ public class AppBuilder {
 
         application.add(cardPanel);
 
-        viewManagerModel.setState(SignupViewModel.VIEW_NAME);
+        viewManagerModel.setState(LoginViewModel.VIEW_NAME);
         viewManagerModel.notifyViewChanged();
 
         return application;
