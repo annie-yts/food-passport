@@ -39,7 +39,7 @@ public class Passport {
     public List<DishStamp> stampsFor(String isoCode) {
         List<DishStamp> result = new ArrayList<>();
         for (DishStamp stamp : stamps) {
-            if (stamp.getCountryCode().equals(isoCode)) {
+            if (stamp.getCountry().equals(isoCode)) {
                 result.add(stamp);
             }
         }
@@ -49,7 +49,7 @@ public class Passport {
     public Set<String> countriesTried() {
         Set<String> result = new HashSet<>();
         for (DishStamp stamp : stamps) {
-            result.add(stamp.getCountryCode());
+            result.add(stamp.getCountry());
         }
         return result;
     }

@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import use_case.ApiAccessBoundary;
+import use_case.discover_dishes.ApiAccessBoundary;
 import entities.Dish;
 import entities.DishFactory;
 
