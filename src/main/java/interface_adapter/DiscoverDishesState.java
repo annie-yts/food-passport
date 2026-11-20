@@ -5,6 +5,7 @@ package interface_adapter;
  */
 public class DiscoverDishesState {
     private String searchTarget;
+    private Boolean isSearchByDish;
     private int page;
 
     public String getSearchTarget() {
@@ -21,6 +22,14 @@ public class DiscoverDishesState {
 
     public void setPage(int page) {
         this.page = page;
+    }
+
+    public Boolean getSearchByDish() {
+        return isSearchByDish;
+    }
+
+    public void setSearchByDish(Boolean searchByDish) {
+        isSearchByDish = searchByDish;
     }
 
     @Override

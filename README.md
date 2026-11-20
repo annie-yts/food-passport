@@ -153,7 +153,7 @@ This use case covers everything tied to the user's account: authentication, acco
 
 ---
 
-## Entities
+## entities
 
 **User**
 - `userId: String` (unique, generated at signup), `userName: String`, `password: String`
