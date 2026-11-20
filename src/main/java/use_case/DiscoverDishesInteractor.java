@@ -15,6 +15,11 @@ public class DiscoverDishesInteractor implements DiscoverDishesInputBoundary{
         Boolean isSearchByDish = discoverDishesInputData.getSearchByDish();
         int page = discoverDishesInputData.getPage();
         Dish[] dishes = mealDBObject.getDish(searchTarget, isSearchByDish);
-
+        for (Dish dish: dishes) {
+            System.out.println(dish.getName());
+        }
+        if (dishes.length == 0) {
+            System.out.println("No dish found!");
+        }
     }
 }

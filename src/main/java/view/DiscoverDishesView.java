@@ -5,6 +5,8 @@ import use_case.ApiAccessBoundary;
 import interface_adapter.DiscoverDishesViewModel;
 import interface_adapter.DiscoverDishesViewModelListener;
 import interface_adapter.DiscoverDishesState;
+import use_case.DiscoverDishesInputBoundary;
+import use_case.DiscoverDishesInteractor;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -169,10 +171,14 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
         final JFrame application = new JFrame("Discover Dishes");
 
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        ApiAccessBoundary theMealDBObject = new TheMealDBClient();
         DiscoverDishesView discoverDishesView = new DiscoverDishesView(
                 new DiscoverDishesViewModel(),
-                new TheMealDBClient()
+                theMealDBObject
         );
+        DiscoverDishesInputBoundary interactor = new DiscoverDishesInteractor(theMealDBObject);
+        DiscoverDishesController dishesController = new DiscoverDishesController(interactor);
+        discoverDishesView.setDiscoverDishesController(dishesController);
         application.setContentPane(discoverDishesView);
         //    application.pack();
         application.setSize(900, 600);
