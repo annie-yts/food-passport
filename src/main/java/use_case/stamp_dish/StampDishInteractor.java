@@ -33,7 +33,7 @@ public class StampDishInteractor implements StampDishInputBoundary {
 
     @Override
     public void execute(StampDishInputData input) {
-        if (input.getDishName() == null || input.getDishName().isEmpty()) {
+        if (input.getDishName() == null || input.getDishName().isBlank()) {
             presenter.prepareFailView("Enter a dish name.");
             return;
         }
