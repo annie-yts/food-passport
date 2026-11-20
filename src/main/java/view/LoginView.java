@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
  * Changes: replaced the unused cancel button with a "Go to Sign Up" button; capitalised button labels;
- * Enter key logs in.
+ * Enter key logs in; password box now stays in sync with the state.
  */
 
 /**
@@ -146,6 +146,7 @@ public class LoginView extends JPanel implements ActionListener, LoginViewModelL
 
     private void setFields(LoginState state) {
         usernameInputField.setText(state.getUsername());
+        passwordInputField.setText(state.getPassword());
     }
 
     public void setLoginController(LoginController loginController) {

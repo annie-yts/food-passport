@@ -12,7 +12,7 @@ import use_case.logout.LogoutOutputData;
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
  * Changes: uses the Profile view instead of LoggedIn; completes the lab's TODOs
- * (clears the profile state and pre-fills the login screen with the username).
+ * (clears the profile state and clears the login screen).
  */
 
 /**
@@ -39,7 +39,7 @@ public class LogoutPresenter implements LogoutOutputBoundary {
         this.profileViewModel.notifyStateChanged();
 
         final LoginState loginState = loginViewModel.getState();
-        loginState.setUsername(response.getUsername());
+        loginState.setUsername("");
         loginState.setPassword("");
         this.loginViewModel.notifyStateChanged();
 
