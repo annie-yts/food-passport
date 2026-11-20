@@ -1,4 +1,4 @@
-package use_case;
+package use_case.discover_dishes;
 
 import interface_adapter.DiscoverDishesInputData;
 

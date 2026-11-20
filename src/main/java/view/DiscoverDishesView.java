@@ -1,16 +1,20 @@
 package view;
 import data_access.TheMealDBClient;
 import interface_adapter.DiscoverDishesController;
-import use_case.ApiAccessBoundary;
+import use_case.discover_dishes.ApiAccessBoundary;
 import interface_adapter.DiscoverDishesViewModel;
 import interface_adapter.DiscoverDishesViewModelListener;
 import interface_adapter.DiscoverDishesState;
-import use_case.DiscoverDishesInputBoundary;
-import use_case.DiscoverDishesInteractor;
+import use_case.discover_dishes.DiscoverDishesInputBoundary;
+import use_case.discover_dishes.DiscoverDishesInteractor;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,11 +28,11 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
     private DiscoverDishesController discoverDishesController = null;
 
     private final JButton prevPage;
+    private final JTextField currPage = new JTextField("1", 2);
     private final JButton nextPage;
     private final JButton viewMyBucketList;
     private final JButton viewRestaurants;
     private final JButton selectCountry;
-
     private final JButton search;
 
     //modules for data access
@@ -129,12 +133,83 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
         final JPanel paginationPanel = new JPanel();
         prevPage = new JButton(DiscoverDishesViewModel.PREV_PAGE_LABEL);
         paginationPanel.add(prevPage);
+        paginationPanel.add(currPage);
         nextPage = new JButton(DiscoverDishesViewModel.NEXT_PAGE_LABEL);
         paginationPanel.add(nextPage);
         // set pagination panel to the bottom left corner
-        paginationPanel.setBounds(20, 500, 170, 40);
+        paginationPanel.setBounds(20, 500, 200, 40);
         // Just for adjustments, visible the frame of panel
         //paginationPanel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+        prevPage.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        DiscoverDishesState currentState = discoverDishesViewModel.getState();
+                        if (currentState.getPage() > 1) {
+                            int newPage = currentState.getPage() - 1;
+                            currPage.setText(String.valueOf(newPage));
+                            currentState.setPage(newPage);
+                            discoverDishesViewModel.setState(currentState);
+                        }
+
+                    }
+                }
+        );
+        nextPage.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        DiscoverDishesState currentState = discoverDishesViewModel.getState();
+                        int newPage = currentState.getPage() + 1;
+                        currPage.setText(String.valueOf(newPage));
+                        currentState.setPage(newPage);
+                        discoverDishesViewModel.setState(currentState);
+                    }
+                }
+        );
+
+        ((AbstractDocument) currPage.getDocument())
+                .setDocumentFilter(new DocumentFilter() {
+
+                    @Override
+                    public void replace(FilterBypass fb, int offset,
+                                        int length, String text, AttributeSet attrs)
+                            throws BadLocationException {
+
+                        String current = fb.getDocument().getText(
+                                0, fb.getDocument().getLength());
+
+                        String next = current.substring(0, offset)
+                                + (text == null ? "" : text)
+                                + current.substring(offset + length);
+
+                        DiscoverDishesState currentState = discoverDishesViewModel.getState();
+                        if (next.matches("[1-9][0-9]*")) {
+                            super.replace(fb, offset, length, text, attrs);
+
+                            currentState.setPage(Integer.parseInt(next));
+                            discoverDishesViewModel.setState(currentState);
+
+                        } else {
+                            fb.replace(0,
+                                    fb.getDocument().getLength(),
+                                    String.valueOf(currentState.getPage()),
+                                    attrs);
+                        }
+                    }
+
+                    @Override
+                    public void insertString(FilterBypass fb, int offset,
+                                             String text, AttributeSet attrs)
+                            throws BadLocationException {
+                        replace(fb, offset, 0, text, attrs);
+                    }
+
+                    @Override
+                    public void remove(FilterBypass fb, int offset, int length)
+                            throws BadLocationException {
+                        replace(fb, offset, length, "", null);
+                    }
+                });
+
 
         final JPanel tryPanel = new JPanel();
         viewMyBucketList = new JButton(DiscoverDishesViewModel.BUCKET_LIST_LABEL);

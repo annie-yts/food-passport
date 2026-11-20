@@ -6,7 +6,7 @@ package interface_adapter;
 public class DiscoverDishesState {
     private String searchTarget;
     private Boolean isSearchByDish;
-    private int page;
+    private int page = 1;
 
     public String getSearchTarget() {
         return searchTarget;

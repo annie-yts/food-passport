@@ -80,7 +80,7 @@ public class DishStamp {
     }
 
 
-    public String getCountryCode() {
-        return dish.getCountryCode();
+    public String getCountry() {
+        return dish.getCountry();
     }
 }
