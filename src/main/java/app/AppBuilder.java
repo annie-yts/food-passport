@@ -33,7 +33,7 @@ import java.awt.*;
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
  * Changes: uses Entities.UserFactory; LoggedIn view replaced by ProfileView;
- * users saved to data/users.csv; change password to be added with that use case;
+ * users saved to data/users.json; change password to be added with that use case;
  * opens on the Log In screen.
  */
 
@@ -49,7 +49,7 @@ public class AppBuilder {
 
     // DAO version using local file storage
     final FileUserDataAccessObject userDataAccessObject =
-            new FileUserDataAccessObject("data/users.csv", userFactory);
+            new FileUserDataAccessObject("data/users.json", userFactory);
 
     private SignupView signupView;
     private SignupViewModel signupViewModel;

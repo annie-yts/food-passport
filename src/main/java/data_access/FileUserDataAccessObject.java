@@ -2,71 +2,67 @@ package data_access;
 
 import Entities.User;
 import Entities.UserFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /*
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
- * Changes: uses Entities.User and Entities.UserFactory; stores a userId column;
- * creates the parent folder (e.g. data/) if it doesn't exist;
- * change password support to be added with that use case.
+ * Changes: uses Entities.User and Entities.UserFactory; saves users as JSON
+ * (userId, username, password) instead of CSV; creates the parent folder
+ * (e.g. data/) if it doesn't exist; change password support to be added with that use case.
  */
 
 /**
- * DAO for user data implemented using a File to persist the data.
+ * DAO for user data implemented using a JSON file to persist the data.
  */
 public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
         LoginUserDataAccessInterface,
         LogoutUserDataAccessInterface {
 
-    private static final String HEADER = "userId,username,password";
+    private static final String USER_ID = "userId";
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
 
-    private final File csvFile;
-    private final Map<String, Integer> headers = new LinkedHashMap<>();
+    private final File jsonFile;
     private final Map<String, User> accounts = new HashMap<>();
 
     private String currentUsername;
 
     /**
-     * Construct this DAO for saving to and reading from a local file.
-     * @param csvPath the path of the file to save to
+     * Construct this DAO for saving to and reading from a local JSON file.
+     * @param jsonPath the path of the file to save to
      * @param userFactory factory for creating user objects
      * @throws RuntimeException if there is an IOException when accessing the file
      */
-    public FileUserDataAccessObject(String csvPath, UserFactory userFactory) {
+    public FileUserDataAccessObject(String jsonPath, UserFactory userFactory) {
+        jsonFile = new File(jsonPath);
 
-        csvFile = new File(csvPath);
-        headers.put("userId", 0);
-        headers.put("username", 1);
-        headers.put("password", 2);
-
-        if (csvFile.length() == 0) {
+        if (jsonFile.length() == 0) {
             save();
         }
         else {
+            try {
+                final String content = Files.readString(jsonFile.toPath(), StandardCharsets.UTF_8);
+                final JSONArray users = new JSONArray(content);
 
-            try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
-                final String header = reader.readLine();
-
-                if (!header.equals(HEADER)) {
-                    throw new RuntimeException(String.format("header should be%n: %s%n but was:%n%s", HEADER, header));
-                }
-
-                String row;
-                while ((row = reader.readLine()) != null) {
-                    final String[] col = row.split(",");
-                    final String userId = String.valueOf(col[headers.get("userId")]);
-                    final String username = String.valueOf(col[headers.get("username")]);
-                    final String password = String.valueOf(col[headers.get("password")]);
-                    final User user = userFactory.create(userId, username, password);
-                    accounts.put(username, user);
+                for (int i = 0; i < users.length(); i++) {
+                    final JSONObject json = users.getJSONObject(i);
+                    final User user = userFactory.create(
+                            json.getString(USER_ID),
+                            json.getString(USERNAME),
+                            json.getString(PASSWORD));
+                    accounts.put(user.getUserName(), user);
                 }
             }
             catch (IOException ex) {
@@ -76,21 +72,22 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
     }
 
     private void save() {
-        final File parent = csvFile.getParentFile();
+        final File parent = jsonFile.getParentFile();
         if (parent != null) {
             parent.mkdirs();
         }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
-            writer.write(String.join(",", headers.keySet()));
-            writer.newLine();
+        final JSONArray users = new JSONArray();
+        for (User user : accounts.values()) {
+            final JSONObject json = new JSONObject();
+            json.put(USER_ID, user.getUserId());
+            json.put(USERNAME, user.getUserName());
+            json.put(PASSWORD, user.getPassword());
+            users.put(json);
+        }
 
-            for (User user : accounts.values()) {
-                final String line = String.format("%s,%s,%s",
-                        user.getUserId(), user.getUserName(), user.getPassword());
-                writer.write(line);
-                writer.newLine();
-            }
+        try {
+            Files.writeString(jsonFile.toPath(), users.toString(2), StandardCharsets.UTF_8);
         }
         catch (IOException ex) {
             throw new RuntimeException(ex);
