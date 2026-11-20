@@ -15,7 +15,7 @@ import java.awt.event.ActionListener;
 /*
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
- * Changes: Enter key signs up.
+ * Changes: Enter key signs up; screen clears after sign up
  */
 
 /**
@@ -185,8 +185,13 @@ public class SignupView extends JPanel implements ActionListener, SignupViewMode
 
     @Override
     public void stateChanged() {
-        if (signupViewModel.getState().getUsernameError() != null) {
-            JOptionPane.showMessageDialog(this, signupViewModel.getState().getUsernameError());
+        final SignupState state = signupViewModel.getState();
+        usernameInputField.setText(state.getUsername());
+        passwordInputField.setText(state.getPassword());
+        repeatPasswordInputField.setText(state.getRepeatPassword());
+        if (state.getUsernameError() != null) {
+            JOptionPane.showMessageDialog(this, state.getUsernameError());
+            state.setUsernameError(null);
         }
     }
 

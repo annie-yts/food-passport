@@ -11,7 +11,7 @@ import java.util.List;
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
  * Changes: uses Entities.User (getUserName instead of getName);
- * one generic error message for a wrong username or password;
+ * separate messages for an unknown username and a wrong password;
  * added switchToSignupView(); names each empty field before checking the account.
  */
 
@@ -44,9 +44,11 @@ public class LoginInteractor implements LoginInputBoundary {
         if (!emptyFields.isEmpty()) {
             loginPresenter.prepareFailView(EmptyFieldsMessage.of(emptyFields));
         }
-        else if (!userDataAccessObject.existsByName(username)
-                || !password.equals(userDataAccessObject.get(username).getPassword())) {
-            loginPresenter.prepareFailView("Incorrect username or password.");
+        else if (!userDataAccessObject.existsByName(username)) {
+            loginPresenter.prepareFailView("Username does not exist.");
+        }
+        else if (!password.equals(userDataAccessObject.get(username).getPassword())) {
+            loginPresenter.prepareFailView("Incorrect password.");
         }
         else {
             final User user = userDataAccessObject.get(username);

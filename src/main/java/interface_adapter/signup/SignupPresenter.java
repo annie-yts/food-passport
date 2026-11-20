@@ -7,8 +7,9 @@ import use_case.signup.SignupOutputBoundary;
 import use_case.signup.SignupOutputData;
 
 /*
- * Copied from the CSC207 ca-login example (Fall 2025 lab version):
+ * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
+ * Changes: clears the sign up screen after a successful sign up.
  */
 
 /**
@@ -30,6 +31,9 @@ public class SignupPresenter implements SignupOutputBoundary {
 
     @Override
     public void prepareSuccessView(SignupOutputData response) {
+        // Clear the sign up screen
+        signupViewModel.setState(new SignupState());
+        signupViewModel.notifyStateChanged();
         // On success, switch to the login view.
         final LoginState loginState = loginViewModel.getState();
         loginState.setUsername(response.getUsername());
