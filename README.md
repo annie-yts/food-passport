@@ -55,9 +55,9 @@ As a student, I want to find restaurants near me that serve a country's food so 
 This use case covers everything tied to the user's account: authentication, account settings, and the profile page with stats.
 
 **Main flow: sign up and log in**
-1. On launch, the user sees the Log In screen, with a link to Sign Up.
-2. To sign up, the user enters a username and password (entered twice). The system checks that the username is free, creates a `User` with a new user ID and a hashed password, and creates an empty passport for them.
-3. To log in, the user enters their username and password. The system checks the password hash and opens their passport.
+1. On launch, the user sees the Log In screen, with a **Go to Sign Up** button.
+2. To sign up, the user enters a username, a password, and the password again (Confirm Password). The system checks that every field is filled in, the passwords match, and the username is free, then creates a `User` with a new user ID and creates an empty passport for them.
+3. To log in, the user enters their username and password (pressing Return also logs in). The system checks the password and opens their passport.
 4. The user clicks **Log Out** at any time to return to the Log In screen.
 
 **Main flow: profile and stats**
@@ -68,13 +68,15 @@ This use case covers everything tied to the user's account: authentication, acco
 
 **Main flow: account settings** (from the Profile)
 - **Change username:** user enters a new username. The system checks it's free and saves it. The user ID stays the same, so the passport is unaffected.
-- **Change password:** user enters their current password and a new one (twice). The system verifies the current password, then saves the new hash.
-- **Delete account:** user confirms with their password. The system deletes the user from `users.json`, deletes their passport file, and returns to the Log In screen.
+- **Change password:** user enters their current password and a new one (twice). The system verifies the current password, then saves the new password.
+- **Delete account:** user confirms with their password. The system deletes the user from `data/users.json`, deletes their passport file, and returns to the Log In screen.
 
 **Alternative flows**
-- Username already taken (sign up or change username) → error is shown and nothing is saved.
-- Passwords don't match, or the password is empty → error is shown and nothing is saved.
-- Wrong username or password at log in → "Incorrect username or password" is shown (without saying which one was wrong).
+- Any field left empty (sign up or log in) → a popup names every empty field, e.g. "Username and Password cannot be empty.", and nothing is saved.
+- Passwords don't match (sign up) → "Passwords don't match." is shown and nothing is saved.
+- Username already taken (sign up or change username) → "Username is already taken." is shown and nothing is saved.
+- Unknown username at log in → "Username does not exist." is shown.
+- Wrong password at log in → "Incorrect password." is shown.
 - Wrong current password (change password or delete account) → error is shown and nothing changes.
 - User cancels the delete confirmation → nothing is deleted.
 - New user with no stamps → the profile shows an empty state with a prompt to stamp a first dish. Export is disabled.
@@ -154,8 +156,8 @@ This use case covers everything tied to the user's account: authentication, acco
 ## Entities
 
 **User**
-- `userId: String` (unique, generated at signup), `username: String`, `passwordHash: String`
-- Stored in `users.json`. The plain-text password is never stored.
+- `userId: String` (unique, generated at signup), `userName: String`, `password: String`
+- Stored in `data/users.json`.
 
 **Country**
 - `isoCode: String` (ISO 3166-1 alpha-3), `name: String`, `region: String`, `subregion: String`, `flagUrl: String`
@@ -187,14 +189,15 @@ Food Passport uses local JSON files for user authentication and passport data st
 
 The application supports multiple independent users on a single shared computer. Each user can sign up, log in, and access their own passport, dish stamps, and bucket list (see Use Case 1).
 
-- `users.json`: Stores user IDs, usernames, and password hashes.
-- `passports/{userId}.json`: Stores each user's dish stamps and bucket-list items.
+- `data/users.json`: Stores user IDs, usernames, and passwords.
+- `data/passports/{userId}.json`: Stores each user's dish stamps and bucket-list items.
 - Each user's data is associated with a unique user ID.
 - Users can only access their own passport through the application.
 
 **Limitations**
 
 - User accounts and passport data are stored locally.
+- Passwords are stored in plain text, so users shouldn't reuse a password from another account.
 - Cross-device login and data synchronization are not supported in the MVP.
 - Cloud-based authentication and remote data storage may be considered in future development.
 
@@ -263,3 +266,31 @@ A bundled file (`country_mapping.json`) that connects each data source's labels 
 - Local JSON is used for both user authentication and passport persistence.
 - The application supports multiple users on a single shared computer, each with an independent passport linked by their unique user ID.
 - Cross-device login and data synchronization are outside the scope of the MVP. Cloud-based authentication and a remote database may be considered as future enhancements.
+
+---
+
+## Acknowledgements
+
+Use Case 1's sign up, log in and log out are based on the CSC207 **ca-login** example (https://github.com/annie-yts/ca-login). Each file says at the top whether it was copied or adapted, and what changed.
+
+**Copied unchanged**
+- `interface_adapter`: `ViewManagerModel`, `ViewManagerModelListener`
+- `interface_adapter.login`: `LoginState`, `LoginViewModel`, `LoginViewModelListener`
+- `interface_adapter.signup`: `SignupController`, `SignupState`, `SignupViewModelListener`
+- `use_case.login`: `LoginInputData`, `LoginOutputData`
+- `use_case.logout`: `LogoutInputBoundary`, `LogoutOutputBoundary`, `LogoutOutputData`, `LogoutUserDataAccessInterface`
+- `use_case.signup`: `SignupInputBoundary`, `SignupInputData`, `SignupOutputBoundary`, `SignupOutputData`
+- `view`: `ViewManager`, `LabelTextPanel`
+
+**Adapted**
+- `Entities`: `User` (added `userId` and setters), `UserFactory` (generates the `userId`)
+- `app`: `AppBuilder`, `Main` (Profile screen, `data/users.json`, opens on Log In)
+- `data_access`: `FileUserDataAccessObject` (saves JSON instead of CSV, with a `userId`), `InMemoryUserDataAccessObject`
+- `interface_adapter.login`: `LoginController`, `LoginPresenter` (go to Profile; Go to Sign Up)
+- `interface_adapter.logout`: `LogoutController`, `LogoutPresenter` (completed the lab's TODOs; clears the login screen)
+- `interface_adapter.profile`: `ProfileState`, `ProfileViewModel`, `ProfileViewModelListener` (from `LoggedIn…`)
+- `interface_adapter.signup`: `SignupPresenter` (clears the screen after sign up), `SignupViewModel` (labels, removed Cancel)
+- `use_case.login`: `LoginInputBoundary`, `LoginOutputBoundary`, `LoginInteractor` (names empty fields; separate unknown-username and wrong-password messages), `LoginUserDataAccessInterface`
+- `use_case.logout`: `LogoutInteractor`
+- `use_case.signup`: `SignupInteractor` (names every empty field), `SignupUserDataAccessInterface`
+- `view`: `LoginView`, `SignupView` (Enter key, popups, button changes, screens clear), `ProfileView` (from `LoggedInView`)
