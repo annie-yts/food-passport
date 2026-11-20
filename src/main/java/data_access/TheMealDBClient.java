@@ -8,12 +8,16 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import use_case.ApiAccessBoundary;
 import entities.Dish;
 import entities.DishFactory;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 
 public class TheMealDBClient implements ApiAccessBoundary {
@@ -68,7 +72,8 @@ public class TheMealDBClient implements ApiAccessBoundary {
         // Create http request
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(
-                        "https://www.themealdb.com/api/json/v1/1/search.php?s=" + dishName))
+                        "https://www.themealdb.com/api/json/v1/1/search.php?s=" +
+                                URLEncoder.encode(dishName, StandardCharsets.UTF_8)))
                 .GET()
                 .build();
 
@@ -82,7 +87,7 @@ public class TheMealDBClient implements ApiAccessBoundary {
             String[] ids = getJsonInfo(response, "idMeal");
             String[] names = getJsonInfo(response, "strMeal");
             String[] categories = getJsonInfo(response, "strCategory");
-            String[] areas = getJsonInfo(response, "strArea");
+            String[] areas = getJsonInfo(response, "strCountry");
             String[] instructions = getJsonInfo(response, "strInstructions");
             String[] mealThumbUrls = getJsonInfo(response, "strMealThumb");
             Dish[] dishes = new Dish[ids.length];
@@ -113,7 +118,8 @@ public class TheMealDBClient implements ApiAccessBoundary {
         // Create http request
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(
-                        "https://www.themealdb.com/api/json/v1/1/filter.php?a=" + country))
+                        "https://www.themealdb.com/api/json/v1/1/filter.php?a=" +
+                                URLEncoder.encode(country, StandardCharsets.UTF_8)))
                 .GET()
                 .build();
 
@@ -152,7 +158,7 @@ public class TheMealDBClient implements ApiAccessBoundary {
             String[] ids = getJsonInfo(response, "idMeal");
             String[] names = getJsonInfo(response, "strMeal");
             String[] categories = getJsonInfo(response, "strCategory");
-            String[] areas = getJsonInfo(response, "strArea");
+            String[] areas = getJsonInfo(response, "strCountry");
             String[] instructions = getJsonInfo(response, "strInstructions");
             String[] mealThumbUrls = getJsonInfo(response, "strMealThumb");
             DishFactory dishFactory = new DishFactory();
@@ -174,15 +180,21 @@ public class TheMealDBClient implements ApiAccessBoundary {
 
     }
 
-    public String[] getJsonInfo(HttpResponse<String> response, String target) {
+    private String[] getJsonInfo(HttpResponse<String> response, String target) {
         JsonObject json = JsonParser.parseString(
                 response.body()).getAsJsonObject();
 
-        JsonArray jsonResults = json
-                .getAsJsonArray("meals");
+        JsonElement element = json.get("meals");
+
+        // avoid throw exception when there are no results found
+        if (element == null || element.isJsonNull()) {
+            return new String[0];
+        }
+
+        JsonArray jsonResults = element.getAsJsonArray();
 
         //check whether there are results
-        if (jsonResults.isEmpty()) {
+        if (jsonResults == null) {
             return new String[0];
         }
 
