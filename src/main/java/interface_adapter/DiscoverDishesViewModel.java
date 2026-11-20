@@ -12,7 +12,9 @@ public class DiscoverDishesViewModel {
     public static final String NEXT_PAGE_LABEL = "Next";
     public static final String BUCKET_LIST_LABEL = "View my bucket list";
     public static final String NEARBY_RESTAURANT_LABEL = "Find restaurants nearby";
-    public static final String COUNTRY_LABEL = "Find country";
+    public static final String COUNTRY_LABEL = "Search by country";
+    public static final String SEARCH_BUTTON_LABEL = "Search";
+    public static final String DISH_INPUT_LABEL = "or dish:";
 
     private final List<DiscoverDishesViewModelListener> listeners = new ArrayList<>();
 

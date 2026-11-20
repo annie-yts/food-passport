@@ -1,4 +1,4 @@
-package Entities;
+package entities;
 
 public class Dish {
     private final String id;
@@ -6,10 +6,11 @@ public class Dish {
     private final String countryCode;
     private final String category;
     private final String thumbnailUrl;
+    private final String instruction;
     private final boolean isManual;
 
     public Dish(String id, String name, String countryCode,
-                String category, String thumbnailUrl, boolean isManual) {
+                String category, String thumbnailUrl, String instruction, boolean isManual) {
         if (name == null) {
             throw new NullPointerException("The input dish's name cannot be empty.");
         }
@@ -23,6 +24,7 @@ public class Dish {
         this.category = category;
         this.thumbnailUrl = thumbnailUrl;
         this.isManual = isManual;
+        this.instruction = instruction;
     }
 
     public String getId() {
@@ -45,6 +47,9 @@ public class Dish {
         return thumbnailUrl;
     }
 
+    public String getInstruction() {
+        return instruction;
+    }
     public boolean isManual() {
         return isManual;
     }
