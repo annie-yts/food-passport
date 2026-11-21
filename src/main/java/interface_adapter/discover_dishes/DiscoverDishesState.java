@@ -1,11 +1,11 @@
-package interface_adapter;
+package interface_adapter.discover_dishes;
 
 /**
  * The state for the DiscoverDishesViewModel.
  */
 public class DiscoverDishesState {
-    private String searchTarget;
-    private Boolean isSearchByDish;
+    private String searchTarget = ""; // initialize as "" to prevent null
+    private Boolean isSearchByDish = false; // initialize as false to prevent null
     private int page = 1;
 
     public String getSearchTarget() {

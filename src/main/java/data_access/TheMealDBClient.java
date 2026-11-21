@@ -15,6 +15,7 @@ import com.google.gson.JsonParser;
 import use_case.discover_dishes.ApiAccessBoundary;
 import entities.Dish;
 import entities.DishFactory;
+import use_case.discover_dishes.ApiException;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

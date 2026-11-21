@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.discover_dishes;
 
 public class DiscoverDishesInputData {
     private final String searchTarget;

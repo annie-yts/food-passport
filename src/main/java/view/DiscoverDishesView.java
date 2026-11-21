@@ -1,10 +1,11 @@
 package view;
 import data_access.TheMealDBClient;
-import interface_adapter.DiscoverDishesController;
+import interface_adapter.discover_dishes.DiscoverDishesController;
 import use_case.discover_dishes.ApiAccessBoundary;
-import interface_adapter.DiscoverDishesViewModel;
-import interface_adapter.DiscoverDishesViewModelListener;
-import interface_adapter.DiscoverDishesState;
+import use_case.discover_dishes.ApiException;
+import interface_adapter.discover_dishes.DiscoverDishesViewModel;
+import interface_adapter.discover_dishes.DiscoverDishesViewModelListener;
+import interface_adapter.discover_dishes.DiscoverDishesState;
 import use_case.discover_dishes.DiscoverDishesInputBoundary;
 import use_case.discover_dishes.DiscoverDishesInteractor;
 
@@ -28,7 +29,7 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
     private DiscoverDishesController discoverDishesController = null;
 
     private final JButton prevPage;
-    private final JTextField currPage = new JTextField("1", 2);
+    private final JTextField currPage = new JTextField("1", 2); // "1" since default is first page
     private final JButton nextPage;
     private final JButton viewMyBucketList;
     private final JButton viewRestaurants;
@@ -46,9 +47,9 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
         discoverDishesViewModel.addListener(this);
 
         final JLabel title = new JLabel(DiscoverDishesViewModel.TITLE_LABEL);
-        title.setFont(new Font("微软雅黑", Font.BOLD, 20));
+        title.setFont(new Font("微软雅黑", Font.BOLD, 26));
         // Distance to the left, top of the frame, and the size of the title
-        title.setBounds(10, 1, 200, 50);
+        title.setBounds(20, 10, 230, 50);
 
         //----------------------------------------------------------------------------------
         // Creates the search panel
@@ -62,9 +63,21 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
         search = new JButton(DiscoverDishesViewModel.SEARCH_BUTTON_LABEL);
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
 
-        //create the pop manu for countries
+        //create the pop menu for countries
         JPopupMenu popupCountries = new JPopupMenu();
-        JList<String> countryList = new JList<>(apiAccessObject.getCountry());
+        JList<String> countryList = new JList<>();
+
+        try{
+        countryList.setListData(apiAccessObject.getCountry());
+        } catch (ApiException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Network error!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
         countryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(countryList);
         scrollPane.setPreferredSize(new Dimension(250, 300));
@@ -228,7 +241,12 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
         this.add(paginationPanel);
         this.add(tryPanel);
 
-
+//        this.add(new DishCardPanel("andy", "abc", 22, 100));
+//        this.add(new DishCardPanel("andy", "abc", 22, 300));
+//        this.add(new DishCardPanel("andy", "abc", 44 + 270, 100));
+//        this.add(new DishCardPanel("andy", "abc", 44 + 270, 300));
+//        this.add(new DishCardPanel("andy", "abc", 66 + 270 * 2, 100));
+//        this.add(new DishCardPanel("andy", "abc", 66 + 270 * 2, 300));
     }
 
 
