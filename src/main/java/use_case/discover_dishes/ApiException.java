@@ -1,4 +1,4 @@
-package data_access;
+package use_case.discover_dishes;
 
 public class ApiException extends RuntimeException {
     public ApiException(String message, Throwable exception) {

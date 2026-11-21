@@ -1,7 +1,7 @@
 /**
  * The View Model for DiscoverDishesView
  */
-package interface_adapter;
+package interface_adapter.discover_dishes;
 
 import java.util.ArrayList;
 import java.util.List;
