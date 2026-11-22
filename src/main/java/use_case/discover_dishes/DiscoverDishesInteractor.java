@@ -5,9 +5,12 @@ import interface_adapter.discover_dishes.DiscoverDishesInputData;
 
 public class DiscoverDishesInteractor implements DiscoverDishesInputBoundary{
     private final ApiAccessBoundary mealDBObject;
+    private final DiscoverDishesOutputBoundary discoverDishesPresenter;
 
-    public DiscoverDishesInteractor(ApiAccessBoundary mealDBObject) {
+    public DiscoverDishesInteractor(ApiAccessBoundary mealDBObject,
+                                    DiscoverDishesOutputBoundary discoverDishesPresenter) {
         this.mealDBObject = mealDBObject;
+        this.discoverDishesPresenter = discoverDishesPresenter;
     }
 
     public void execute(DiscoverDishesInputData discoverDishesInputData) {
@@ -15,15 +18,42 @@ public class DiscoverDishesInteractor implements DiscoverDishesInputBoundary{
         Boolean isSearchByDish = discoverDishesInputData.getSearchByDish();
         int page = discoverDishesInputData.getPage();
         try {
-        Dish[] dishes = mealDBObject.getDish(searchTarget, isSearchByDish);
-        for (Dish dish: dishes) {
-            System.out.println(dish.getName());
-        }
-        if (dishes.length == 0) {
-            System.out.println("No dish found!");
-        }
+            Dish[] dishes = mealDBObject.getDish(searchTarget, isSearchByDish);
+            int dishStartIndex =  6 * (page - 1); // 6 dishes per page;
+
+            if (dishes.length == 0) {
+                discoverDishesPresenter.prepareNoDishFoundView("No Dish Found!");
+            }
+            else if (dishStartIndex >= dishes.length) {
+                int numPages = (dishes.length - 1) / 6 + 1;
+                discoverDishesPresenter.prepareOutOfScopeView(
+                        "Out of scope! The overall pages are ", numPages);
+            }
+            else {
+                int dishIndex = 0;
+                for (int i = dishStartIndex; (i < dishStartIndex + 6) && i < dishes.length; i++) {
+                    String dishName = dishes[i].getName();
+                    String dishCountry = dishes[i].getCountry();
+                    String dishUrl = dishes[i].getThumbnailUrl();
+                    if (dishUrl == null) {
+                        DiscoverDishesOutputData outputData = new DiscoverDishesOutputData(dishName,
+                                dishCountry,
+                                dishIndex);
+                        discoverDishesPresenter.prepareSuccessView(outputData);
+                    } else {
+                        DiscoverDishesOutputData outputData = new DiscoverDishesOutputData(dishName,
+                            dishCountry,
+                            dishUrl,
+                            dishIndex);
+                        discoverDishesPresenter.prepareSuccessView(outputData);
+
+                    }
+                    dishIndex++;
+                }
+            }
+
         } catch (ApiException e) {
-            System.out.println("Network error. Please try again later.");
+            discoverDishesPresenter.prepareNetworkErrorView(e);
         }
     }
 }
