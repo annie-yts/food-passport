@@ -1,13 +1,7 @@
 package view;
 import data_access.TheMealDBClient;
-import interface_adapter.discover_dishes.DiscoverDishesController;
-import use_case.discover_dishes.ApiAccessBoundary;
-import use_case.discover_dishes.ApiException;
-import interface_adapter.discover_dishes.DiscoverDishesViewModel;
-import interface_adapter.discover_dishes.DiscoverDishesViewModelListener;
-import interface_adapter.discover_dishes.DiscoverDishesState;
-import use_case.discover_dishes.DiscoverDishesInputBoundary;
-import use_case.discover_dishes.DiscoverDishesInteractor;
+import interface_adapter.discover_dishes.*;
+import use_case.discover_dishes.*;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -31,6 +25,7 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
     private final JButton prevPage;
     private final JTextField currPage = new JTextField("1", 2); // "1" since default is first page
     private final JButton nextPage;
+    private final JButton apply;
     private final JButton viewMyBucketList;
     private final JButton viewRestaurants;
     private final JButton selectCountry;
@@ -47,7 +42,7 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
         discoverDishesViewModel.addListener(this);
 
         final JLabel title = new JLabel(DiscoverDishesViewModel.TITLE_LABEL);
-        title.setFont(new Font("微软雅黑", Font.BOLD, 26));
+        title.setFont(new Font("Arial", Font.BOLD, 26));
         // Distance to the left, top of the frame, and the size of the title
         title.setBounds(20, 10, 230, 50);
 
@@ -123,7 +118,14 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
                             currentState.setSearchByDish(true);
                             discoverDishesViewModel.setState(currentState);
                         }
+
                         DiscoverDishesState currentState = discoverDishesViewModel.getState();
+                        //delete previous panels
+                        for (int i = 0; i < 6; i++) {
+                            if (currentState.getCurrentDish()[i] != null) { DiscoverDishesView.this.remove
+                                    (currentState.getCurrentDish()[i]);}
+                        }
+
                         discoverDishesController.execute(
                                 currentState.getSearchTarget(),
                                 currentState.getSearchByDish(),
@@ -149,10 +151,33 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
         paginationPanel.add(currPage);
         nextPage = new JButton(DiscoverDishesViewModel.NEXT_PAGE_LABEL);
         paginationPanel.add(nextPage);
+        apply = new JButton(DiscoverDishesViewModel.APPLY_LABEL);
+        paginationPanel.add(apply);
         // set pagination panel to the bottom left corner
-        paginationPanel.setBounds(20, 500, 200, 40);
+        paginationPanel.setBounds(20, 500, 300, 40);
         // Just for adjustments, visible the frame of panel
         //paginationPanel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+
+        apply.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+
+                        DiscoverDishesState currentState = discoverDishesViewModel.getState();
+                        //delete previous panels
+                        for (int i = 0; i < 6; i++) {
+                            if (currentState.getCurrentDish()[i] != null) { DiscoverDishesView.this.remove
+                                    (currentState.getCurrentDish()[i]);}
+                        }
+
+                        discoverDishesController.execute(
+                                currentState.getSearchTarget(),
+                                currentState.getSearchByDish(),
+                                currentState.getPage());
+
+                    }
+                }
+        );
+
         prevPage.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
@@ -162,6 +187,18 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
                             currPage.setText(String.valueOf(newPage));
                             currentState.setPage(newPage);
                             discoverDishesViewModel.setState(currentState);
+
+                            for (int i = 0; i < 6; i++) {
+                                if (currentState.getCurrentDish()[i] != null) { DiscoverDishesView.this.remove
+                                        (currentState.getCurrentDish()[i]);}
+                            }
+
+//                            // everytime press prevPage, the system will automatically search for dish
+//                            discoverDishesController.execute(
+//                                    currentState.getSearchTarget(),
+//                                    currentState.getSearchByDish(),
+//                                    currentState.getPage());
+
                         }
 
                     }
@@ -175,6 +212,17 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
                         currPage.setText(String.valueOf(newPage));
                         currentState.setPage(newPage);
                         discoverDishesViewModel.setState(currentState);
+
+                        for (int i = 0; i < 6; i++) {
+                            if (currentState.getCurrentDish()[i] != null) { DiscoverDishesView.this.remove
+                                    (currentState.getCurrentDish()[i]);}
+                        }
+
+//                        // everytime press nextpage, the system will automatically search for dish
+//                        discoverDishesController.execute(
+//                                currentState.getSearchTarget(),
+//                                currentState.getSearchByDish(),
+//                                currentState.getPage());
                     }
                 }
         );
@@ -200,6 +248,17 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
 
                             currentState.setPage(Integer.parseInt(next));
                             discoverDishesViewModel.setState(currentState);
+
+                            for (int i = 0; i < 6; i++) {
+                                if (currentState.getCurrentDish()[i] != null) { DiscoverDishesView.this.remove
+                                        (currentState.getCurrentDish()[i]);}
+                            }
+
+//                            // everytime set page, the system will automatically search for dish
+//                            discoverDishesController.execute(
+//                                    currentState.getSearchTarget(),
+//                                    currentState.getSearchByDish(),
+//                                    currentState.getPage());
 
                         } else {
                             fb.replace(0,
@@ -240,24 +299,97 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
         this.add(searchPanel);
         this.add(paginationPanel);
         this.add(tryPanel);
-
-//        this.add(new DishCardPanel("andy", "abc", 22, 100));
-//        this.add(new DishCardPanel("andy", "abc", 22, 300));
-//        this.add(new DishCardPanel("andy", "abc", 44 + 270, 100));
-//        this.add(new DishCardPanel("andy", "abc", 44 + 270, 300));
-//        this.add(new DishCardPanel("andy", "abc", 66 + 270 * 2, 100));
-//        this.add(new DishCardPanel("andy", "abc", 66 + 270 * 2, 300));
     }
 
 
     @Override
-    public void stateChanged() {
-        return;
+    public void stateChanged(String dishName, String country, int dishIndex) {
+
+        // Delete previous shown dishes
+        DiscoverDishesState currState = discoverDishesViewModel.getState();
+
+        // Add current dish
+        JPanel thisDishCard = new DishCardPanel(dishName,
+                country,
+                22 * ((dishIndex / 2) + 1) + // spaces between column based on given index
+                        270 * (dishIndex / 2), // horizontal location of panel based on given index
+                200 - 100 * (int) Math.pow(-1, dishIndex)); // even index dish on first row of the view panel, vice versa
+        currState.setCurrentDish(dishIndex, thisDishCard);
+        discoverDishesViewModel.setState(currState);
+        this.add(thisDishCard);
+        this.revalidate();
+        this.repaint();
+
     }
+
+    @Override
+    public void stateChanged(String dishName, String country, String imageUrl, int dishIndex) {
+        // Delete previous shown dishes
+        DiscoverDishesState currState = discoverDishesViewModel.getState();
+
+        // Add current dish
+        JPanel thisDishCard = new DishCardPanel(dishName,
+                country,
+                imageUrl,
+                22 * ((dishIndex / 2) + 1) + // spaces between column based on given index
+                        270 * (dishIndex / 2), // horizontal location of panel based on given index
+                200 - 100 * (int) Math.pow(-1, dishIndex)); // even index dish on first row of the view panel, vice versa
+        currState.setCurrentDish(dishIndex, thisDishCard);
+        discoverDishesViewModel.setState(currState);
+        this.add(thisDishCard);
+        this.revalidate();
+        this.repaint();
+    }
+
+    @Override
+    public void stateChanged(String info) {
+        JOptionPane.showMessageDialog(
+                this,
+                info,
+                "Dish Not Found",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+    @Override
+    public void stateChanged(String info, int pages) {
+        JPanel outOfScopePanel = new JPanel();
+        outOfScopePanel.setBounds(20, 100, 300, 50); //location that the message shown
+        JLabel outOfScopeLabel = new JLabel(info + pages);
+        outOfScopeLabel.setBounds(40, 100, 300, 50);
+        outOfScopePanel.add(outOfScopeLabel);
+
+
+        DiscoverDishesState currState = discoverDishesViewModel.getState();
+        currState.setCurrentDish(0, outOfScopePanel);
+
+        discoverDishesViewModel.setState(currState);
+        this.add(outOfScopePanel);
+        this.revalidate();
+        this.repaint();
+
+
+    }
+    @Override
+    public void stateChanged(ApiException e) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Network error!",
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
+
 
     public void setDiscoverDishesController(DiscoverDishesController discoverDishesController) {
         this.discoverDishesController = discoverDishesController;
     }
+
+
+
+
+
+
+
 
     //temporary place main method here to build the view quickly
     public static void main(String[] args) {
@@ -265,11 +397,13 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
 
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         ApiAccessBoundary theMealDBObject = new TheMealDBClient();
+        DiscoverDishesViewModel discoverDishesViewModel = new DiscoverDishesViewModel();
         DiscoverDishesView discoverDishesView = new DiscoverDishesView(
-                new DiscoverDishesViewModel(),
+                discoverDishesViewModel,
                 theMealDBObject
         );
-        DiscoverDishesInputBoundary interactor = new DiscoverDishesInteractor(theMealDBObject);
+        DiscoverDishesOutputBoundary discoverDishesPresenter = new DiscoverDishesPresenter(discoverDishesViewModel);
+        DiscoverDishesInputBoundary interactor = new DiscoverDishesInteractor(theMealDBObject, discoverDishesPresenter);
         DiscoverDishesController dishesController = new DiscoverDishesController(interactor);
         discoverDishesView.setDiscoverDishesController(dishesController);
         application.setContentPane(discoverDishesView);

@@ -1,5 +1,7 @@
 package interface_adapter.discover_dishes;
 
+import javax.swing.*;
+
 /**
  * The state for the DiscoverDishesViewModel.
  */
@@ -7,6 +9,7 @@ public class DiscoverDishesState {
     private String searchTarget = ""; // initialize as "" to prevent null
     private Boolean isSearchByDish = false; // initialize as false to prevent null
     private int page = 1;
+    private final JPanel[] currentDishPanel = new JPanel[6];
 
     public String getSearchTarget() {
         return searchTarget;
@@ -30,6 +33,18 @@ public class DiscoverDishesState {
 
     public void setSearchByDish(Boolean searchByDish) {
         isSearchByDish = searchByDish;
+    }
+
+    public JPanel[] getCurrentDish() {
+        return currentDishPanel;
+    }
+
+    public void setCurrentDish(int index, JPanel currentDish) {
+        this.currentDishPanel[index] = currentDish;
+    }
+
+    public void setCurrentDish(int index) {
+        this.currentDishPanel[index] = null;
     }
 
     @Override

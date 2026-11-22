@@ -3,6 +3,9 @@
  */
 package interface_adapter.discover_dishes;
 
+import use_case.discover_dishes.ApiException;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +18,10 @@ public class DiscoverDishesViewModel {
     public static final String COUNTRY_LABEL = "Search by country";
     public static final String SEARCH_BUTTON_LABEL = "Search";
     public static final String DISH_INPUT_LABEL = "or dish:";
+    public static final String APPLY_LABEL = "apply";
 
     private final List<DiscoverDishesViewModelListener> listeners = new ArrayList<>();
+
 
     private DiscoverDishesState state = new DiscoverDishesState();
 
@@ -32,9 +37,34 @@ public class DiscoverDishesViewModel {
         listeners.add(listener);
     }
 
-    public void notifyStateChanged() {
+
+    public void notifyStateChanged(String dishName, String country, String imageUrl, int dishIndex) {
         for (DiscoverDishesViewModelListener listener : listeners) {
-            listener.stateChanged();
+            listener.stateChanged(dishName, country, imageUrl, dishIndex);
+        }
+    }
+
+    public void notifyStateChanged(String dishName, String country, int dishIndex) {
+        for (DiscoverDishesViewModelListener listener : listeners) {
+            listener.stateChanged(dishName, country, dishIndex);
+        }
+    }
+
+    public void notifyStateChanged(String info) {
+        for (DiscoverDishesViewModelListener listener : listeners) {
+            listener.stateChanged(info);
+        }
+    }
+
+    public void notifyStateChanged(String info, int pages) {
+        for (DiscoverDishesViewModelListener listener : listeners) {
+            listener.stateChanged(info, pages);
+        }
+    }
+
+    public void notifyStateChanged(ApiException e) {
+        for (DiscoverDishesViewModelListener listener : listeners) {
+            listener.stateChanged(e);
         }
     }
 
