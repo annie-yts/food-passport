@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
  * Changes: Enter key signs up; screen clears after sign up; removed the unimplemented Cancel button;
- * Sign Up button before Go to Log In.
+ * Sign Up button before Go to Log In; fields laid out with FormPanel so they line up.
  */
 
 /**
@@ -40,12 +40,10 @@ public class SignupView extends JPanel implements ActionListener, SignupViewMode
         final JLabel title = new JLabel(SignupViewModel.TITLE_LABEL);
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        final LabelTextPanel usernameInfo = new LabelTextPanel(
-                new JLabel(SignupViewModel.USERNAME_LABEL), usernameInputField);
-        final LabelTextPanel passwordInfo = new LabelTextPanel(
-                new JLabel(SignupViewModel.PASSWORD_LABEL), passwordInputField);
-        final LabelTextPanel repeatPasswordInfo = new LabelTextPanel(
-                new JLabel(SignupViewModel.REPEAT_PASSWORD_LABEL), repeatPasswordInputField);
+        final FormPanel form = new FormPanel();
+        form.addRow(SignupViewModel.USERNAME_LABEL, usernameInputField);
+        form.addRow(SignupViewModel.PASSWORD_LABEL, passwordInputField);
+        form.addRow(SignupViewModel.REPEAT_PASSWORD_LABEL, repeatPasswordInputField);
 
         final JPanel buttons = new JPanel();
         signUp = new JButton(SignupViewModel.SIGNUP_BUTTON_LABEL);
@@ -85,9 +83,7 @@ public class SignupView extends JPanel implements ActionListener, SignupViewMode
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         this.add(title);
-        this.add(usernameInfo);
-        this.add(passwordInfo);
-        this.add(repeatPasswordInfo);
+        this.add(form);
         this.add(buttons);
 
         // Pressing Enter in any field clicks Sign Up

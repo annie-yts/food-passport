@@ -34,7 +34,7 @@ import java.awt.*;
  * https://github.com/annie-yts/ca-login
  * Changes: uses Entities.UserFactory; LoggedIn view replaced by ProfileView;
  * users saved to data/users.json; change password to be added with that use case;
- * opens on the Log In screen.
+ * opens on the Log In screen; margin around every screen.
  */
 
 /**
@@ -60,6 +60,7 @@ public class AppBuilder {
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
+        cardPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
     }
 
     public AppBuilder addSignupView() {
