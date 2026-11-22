@@ -280,7 +280,7 @@ Use Case 1's sign up, log in and log out are based on the CSC207 **ca-login** ex
 - `use_case.login`: `LoginInputData`, `LoginOutputData`
 - `use_case.logout`: `LogoutInputBoundary`, `LogoutOutputBoundary`, `LogoutOutputData`, `LogoutUserDataAccessInterface`
 - `use_case.signup`: `SignupInputBoundary`, `SignupInputData`, `SignupOutputBoundary`, `SignupOutputData`
-- `view`: `ViewManager`, `LabelTextPanel`
+- `view`: `ViewManager`
 
 **Adapted**
 - `Entities`: `User` (added `userId` and setters), `UserFactory` (generates the `userId`)
@@ -293,4 +293,4 @@ Use Case 1's sign up, log in and log out are based on the CSC207 **ca-login** ex
 - `use_case.login`: `LoginInputBoundary`, `LoginOutputBoundary`, `LoginInteractor` (names empty fields; separate unknown-username and wrong-password messages), `LoginUserDataAccessInterface`
 - `use_case.logout`: `LogoutInteractor`
 - `use_case.signup`: `SignupInteractor` (names every empty field), `SignupUserDataAccessInterface`
-- `view`: `LoginView`, `SignupView` (Enter key, popups, button changes, screens clear), `ProfileView` (from `LoggedInView`)
+- `view`: `LoginView`, `SignupView` (Enter key, popups, button changes, screens clear), `ProfileView` (from `LoggedInView`), `LabelTextPanel` (labels the same width so fields line up)
