@@ -295,10 +295,12 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
 
         // CreateLayout
         this.setLayout(null);
+        this.setPreferredSize(new Dimension(900, 600));
         this.add(title);
         this.add(searchPanel);
         this.add(paginationPanel);
         this.add(tryPanel);
+
     }
 
 
@@ -384,32 +386,35 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
         this.discoverDishesController = discoverDishesController;
     }
 
-
-
-
-
-
-
-
-    //temporary place main method here to build the view quickly
-    public static void main(String[] args) {
-        final JFrame application = new JFrame("Discover Dishes");
-
-        application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        ApiAccessBoundary theMealDBObject = new TheMealDBClient();
-        DiscoverDishesViewModel discoverDishesViewModel = new DiscoverDishesViewModel();
-        DiscoverDishesView discoverDishesView = new DiscoverDishesView(
-                discoverDishesViewModel,
-                theMealDBObject
-        );
-        DiscoverDishesOutputBoundary discoverDishesPresenter = new DiscoverDishesPresenter(discoverDishesViewModel);
-        DiscoverDishesInputBoundary interactor = new DiscoverDishesInteractor(theMealDBObject, discoverDishesPresenter);
-        DiscoverDishesController dishesController = new DiscoverDishesController(interactor);
-        discoverDishesView.setDiscoverDishesController(dishesController);
-        application.setContentPane(discoverDishesView);
-        //    application.pack();
-        application.setSize(900, 600);
-        application.setVisible(true);
+    public void addBackToProfileButton(Runnable onClick) {
+        JButton backButton = new JButton("Back to Profile");
+        backButton.setBounds(260, 20, 150, 30);
+        backButton.addActionListener(evt -> onClick.run());
+        this.add(backButton);
     }
+
+
+
+
+//    //temporary place main method here to build the view quickly
+//    public static void main(String[] args) {
+//        final JFrame application = new JFrame("Discover Dishes");
+//
+//        application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//        ApiAccessBoundary theMealDBObject = new TheMealDBClient();
+//        DiscoverDishesViewModel discoverDishesViewModel = new DiscoverDishesViewModel();
+//        DiscoverDishesView discoverDishesView = new DiscoverDishesView(
+//                discoverDishesViewModel,
+//                theMealDBObject
+//        );
+//        DiscoverDishesOutputBoundary discoverDishesPresenter = new DiscoverDishesPresenter(discoverDishesViewModel);
+//        DiscoverDishesInputBoundary interactor = new DiscoverDishesInteractor(theMealDBObject, discoverDishesPresenter);
+//        DiscoverDishesController dishesController = new DiscoverDishesController(interactor);
+//        discoverDishesView.setDiscoverDishesController(dishesController);
+//        application.setContentPane(discoverDishesView);
+//        //    application.pack();
+//        application.setSize(900, 600);
+//        application.setVisible(true);
+//    }
 
 }

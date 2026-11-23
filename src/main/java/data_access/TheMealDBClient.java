@@ -13,8 +13,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import use_case.discover_dishes.ApiAccessBoundary;
-import entities.Dish;
-import entities.DishFactory;
+import Entities.Dish;
+import Entities.DishFactory;
 import use_case.discover_dishes.ApiException;
 
 import java.net.URLEncoder;

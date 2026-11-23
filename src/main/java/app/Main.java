@@ -18,9 +18,11 @@ public class Main {
                 .addLoginView()
                 .addSignupView()
                 .addProfileView()
+                .addDiscoverDishesView()
                 .addSignupUseCase()
                 .addLoginUseCase()
                 .addLogoutUseCase()
+                .addDiscoverDishesUseCase()
                 .build();
         application.pack();
         application.setLocationRelativeTo(null);

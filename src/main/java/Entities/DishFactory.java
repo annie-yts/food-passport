@@ -1,4 +1,4 @@
-package entities;
+package Entities;
 
 /**
  * Factory for creating Dish objects.

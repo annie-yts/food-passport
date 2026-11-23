@@ -1,6 +1,6 @@
 package use_case.discover_dishes;
 
-import entities.Dish;
+import Entities.Dish;
 import interface_adapter.discover_dishes.DiscoverDishesInputData;
 
 public class DiscoverDishesInteractor implements DiscoverDishesInputBoundary{

@@ -1,6 +1,6 @@
 package use_case.discover_dishes;
 
-import entities.Dish;
+import Entities.Dish;
 
 public interface ApiAccessBoundary {
     String[] getCountry();

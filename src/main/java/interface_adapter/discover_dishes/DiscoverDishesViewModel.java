@@ -20,6 +20,9 @@ public class DiscoverDishesViewModel {
     public static final String DISH_INPUT_LABEL = "or dish:";
     public static final String APPLY_LABEL = "apply";
 
+    public static final String VIEW_NAME = "Discover Dishes";
+
+
     private final List<DiscoverDishesViewModelListener> listeners = new ArrayList<>();
 
 

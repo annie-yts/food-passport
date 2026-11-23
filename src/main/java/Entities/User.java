@@ -1,4 +1,4 @@
-package entities;
+package Entities;
 
 /*
  * Adapted from the CSC207 ca-login example:
