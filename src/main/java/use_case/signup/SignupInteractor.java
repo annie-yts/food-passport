@@ -1,7 +1,7 @@
 package use_case.signup;
 
-import Entities.User;
-import Entities.UserFactory;
+import entities.User;
+import entities.UserFactory;
 
 import use_case.EmptyFieldsMessage;
 
@@ -11,7 +11,7 @@ import java.util.List;
 /*
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
- * Changes: uses Entities.User and Entities.UserFactory (getUserName instead of getName);
+ * Changes: uses entities.User and entities.UserFactory (getUserName instead of getName);
  * passport creation to be added;
  * checks all empty fields first and names each one; "Username is already taken."
  */

@@ -1,6 +1,6 @@
 package interface_adapter.add_stamp;
 
-import Entities.PlaceType;
+import entities.PlaceType;
 import use_case.stamp_dish.StampDishInputBoundary;
 import use_case.stamp_dish.StampDishInputData;
 

@@ -1,11 +1,11 @@
 package use_case.signup;
 
-import Entities.User;
+import entities.User;
 
 /*
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
- * Changes: uses Entities.User instead of entity.User.
+ * Changes: uses entities.User instead of entity.User.
  */
 
 /**

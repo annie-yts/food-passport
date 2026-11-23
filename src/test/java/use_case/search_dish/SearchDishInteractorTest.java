@@ -1,6 +1,6 @@
 package use_case.search_dish;
 
-import Entities.Dish;
+import entities.Dish;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import use_case.discover_dishes.ApiAccessBoundary;

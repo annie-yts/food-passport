@@ -1,7 +1,7 @@
 package data_access;
 
-import Entities.Dish;
-import Entities.DishFactory;
+import entities.Dish;
+import entities.DishFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

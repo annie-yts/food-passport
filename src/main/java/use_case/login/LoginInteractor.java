@@ -1,6 +1,6 @@
 package use_case.login;
 
-import Entities.User;
+import entities.User;
 
 import use_case.EmptyFieldsMessage;
 
@@ -10,7 +10,7 @@ import java.util.List;
 /*
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
- * Changes: uses Entities.User (getUserName instead of getName);
+ * Changes: uses entities.User (getUserName instead of getName);
  * separate messages for an unknown username and a wrong password;
  * added switchToSignupView(); names each empty field before checking the account.
  */

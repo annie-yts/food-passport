@@ -1,6 +1,6 @@
 package data_access;
 
-import Entities.User;
+import entities.User;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -11,7 +11,7 @@ import java.util.Map;
 /*
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
- * Changes: uses Entities.User (getUserName instead of getName);
+ * Changes: uses entities.User (getUserName instead of getName);
  * change password support to be added with that use case.
  */
 

@@ -1,6 +1,6 @@
 package use_case.stamp_dish;
 
-import Entities.PlaceType;
+import entities.PlaceType;
 
 public class StampDishInputData {
     private final String userId;

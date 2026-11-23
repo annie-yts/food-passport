@@ -1,6 +1,6 @@
 package app;
 
-import Entities.UserFactory;
+import entities.UserFactory;
 import data_access.CountryMapping;
 import data_access.FileUserDataAccessObject;
 import data_access.TheMealDBClient;
@@ -39,7 +39,7 @@ import java.awt.*;
 /*
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
- * Changes: uses Entities.UserFactory; LoggedIn view replaced by ProfileView;
+ * Changes: uses entities.UserFactory; LoggedIn view replaced by ProfileView;
  * users saved to data/users.json; change password to be added with that use case;
  * opens on the Log In screen; margin around every screen; Home screen after log in.
  */

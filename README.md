@@ -290,7 +290,7 @@ Use Case 1's sign up, log in and log out are based on the CSC207 **ca-login** ex
 - `view`: `ViewManager`
 
 **Adapted**
-- `Entities`: `User` (added `userId` and setters), `UserFactory` (generates the `userId`)
+- `entities`: `User` (added `userId` and setters), `UserFactory` (generates the `userId`)
 - `app`: `AppBuilder`, `Main` (Profile screen, `data/users.json`, opens on Log In)
 - `data_access`: `FileUserDataAccessObject` (saves JSON instead of CSV, with a `userId`), `InMemoryUserDataAccessObject`
 - `interface_adapter.login`: `LoginController`, `LoginPresenter` (go to Profile; Go to Sign Up)
