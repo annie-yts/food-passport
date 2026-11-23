@@ -131,7 +131,8 @@ This use case covers everything tied to the user's account: authentication, acco
 **Alternative flows**
 - Address left empty → "Address cannot be empty."
 - Radius is not a positive number → "Radius must be greater than 0."
-- Address not found → "Address not found".
+- Radius over 50 km → "Radius cannot be more than 50km."
+- Address not found → "Address not found."
 - No matching restaurants in range → system suggests increasing the radius.
 - Country has no mapped OSM tags → system says nearby search isn't available for that country.
 - Nominatim or Overpass can't be reached → "Couldn't reach the map service. Please try again later."
