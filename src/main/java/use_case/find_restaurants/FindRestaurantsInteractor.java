@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FindRestaurantsInteractor implements FindRestaurantsInputBoundary {
     private final CountryMappingGateway mapping;
@@ -51,7 +52,7 @@ public class FindRestaurantsInteractor implements FindRestaurantsInputBoundary {
             for (Restaurant r : found) {
                 List<String> matching = r.getCuisineTags().stream()
                         .filter(countryTags::contains)
-                        .toList();
+                        .collect(Collectors.toList());
                 double dist = r.distanceTo(center.get().latitude(), center.get().longitude());
                 results.add(new FindRestaurantsOutputData.RestaurantResult(
                         r.getName(), r.getAddress(), matching, dist));
@@ -65,7 +66,7 @@ public class FindRestaurantsInteractor implements FindRestaurantsInputBoundary {
                 presenter.prepareSuccessView(new FindRestaurantsOutputData(results));
             }
         } catch (GatewayException e) {
-            presenter.prepareFailView("Coudln't reach the map service. Please try again later.");
+            presenter.prepareFailView("Couldn't reach the map service. Please try again later.");
         }
     }
 }
