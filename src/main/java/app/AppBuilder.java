@@ -8,6 +8,7 @@ import interface_adapter.ViewManagerModel;
 import interface_adapter.discover_dishes.DiscoverDishesController;
 import interface_adapter.discover_dishes.DiscoverDishesPresenter;
 import interface_adapter.discover_dishes.DiscoverDishesViewModel;
+import interface_adapter.home.HomeViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -40,7 +41,7 @@ import java.awt.*;
  * https://github.com/annie-yts/ca-login
  * Changes: uses Entities.UserFactory; LoggedIn view replaced by ProfileView;
  * users saved to data/users.json; change password to be added with that use case;
- * opens on the Log In screen; margin around every screen.
+ * opens on the Log In screen; margin around every screen; Home screen after log in.
  */
 
 /**
@@ -60,6 +61,8 @@ public class AppBuilder {
     private SignupView signupView;
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
+    private HomeViewModel homeViewModel;
+    private HomeView homeView;
     private ProfileViewModel profileViewModel;
     private ProfileView profileView;
     private LoginView loginView;
@@ -88,16 +91,31 @@ public class AppBuilder {
         return this;
     }
 
+    public AppBuilder addHomeView() {
+        homeViewModel = new HomeViewModel();
+        homeView = new HomeView(homeViewModel);
+
+        homeView.setOnAddStamp(() -> JOptionPane.showMessageDialog(homeView, "Add Stamp is coming soon."));
+        homeView.setOnWorldMap(() -> JOptionPane.showMessageDialog(homeView, "World Map is coming soon."));
+        homeView.setOnDiscover(() -> switchTo(DiscoverDishesViewModel.VIEW_NAME));
+        homeView.setOnProfile(() -> switchTo(ProfileViewModel.VIEW_NAME));
+
+        cardPanel.add(homeView, HomeViewModel.VIEW_NAME);
+        return this;
+    }
+
     public AppBuilder addProfileView() {
         profileViewModel = new ProfileViewModel();
         profileView = new ProfileView(profileViewModel);
-
-        profileView.setOnDiscoverDishes(() -> {
-            viewManagerModel.setState(DiscoverDishesViewModel.VIEW_NAME);
-            viewManagerModel.notifyViewChanged();
-        });
+        profileView.setOnBack(() -> switchTo(HomeViewModel.VIEW_NAME));
         cardPanel.add(profileView, ProfileViewModel.VIEW_NAME);
         return this;
+    }
+
+    /** Shows the screen with the given view name. */
+    private void switchTo(String viewName) {
+        viewManagerModel.setState(viewName);
+        viewManagerModel.notifyViewChanged();
     }
 
     public AppBuilder addSignupUseCase() {
@@ -112,7 +130,7 @@ public class AppBuilder {
     }
 
     public AppBuilder addLoginUseCase() {
-        final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(viewManagerModel,
+        final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(viewManagerModel, homeViewModel,
                 profileViewModel, loginViewModel);
         final LoginInputBoundary loginInteractor = new LoginInteractor(
                 userDataAccessObject, loginOutputBoundary);
@@ -127,24 +145,21 @@ public class AppBuilder {
      * @return this builder
      */
     public AppBuilder addLogoutUseCase() {
-        final LogoutOutputBoundary logoutOutputBoundary = new LogoutPresenter(viewManagerModel,
+        final LogoutOutputBoundary logoutOutputBoundary = new LogoutPresenter(viewManagerModel, homeViewModel,
                 profileViewModel, loginViewModel);
 
         final LogoutInputBoundary logoutInteractor =
                 new LogoutInteractor(userDataAccessObject, logoutOutputBoundary);
 
         final LogoutController logoutController = new LogoutController(logoutInteractor);
-        profileView.setLogoutController(logoutController);
+        homeView.setLogoutController(logoutController);
         return this;
     }
 
     public AppBuilder addDiscoverDishesView() {
         discoverDishesViewModel = new DiscoverDishesViewModel();
         discoverDishesView = new DiscoverDishesView(discoverDishesViewModel, countryMapping.getCountryNamesByCode());
-        discoverDishesView.addBackToProfileButton(() -> {
-            viewManagerModel.setState(ProfileViewModel.VIEW_NAME);
-            viewManagerModel.notifyViewChanged();
-        });
+        discoverDishesView.addBackToProfileButton(() -> switchTo(HomeViewModel.VIEW_NAME));
         cardPanel.add(discoverDishesView, DiscoverDishesViewModel.VIEW_NAME);
         return this;
     }
