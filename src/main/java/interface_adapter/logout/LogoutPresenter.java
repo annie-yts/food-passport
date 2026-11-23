@@ -1,6 +1,8 @@
 package interface_adapter.logout;
 
 import interface_adapter.ViewManagerModel;
+import interface_adapter.home.HomeState;
+import interface_adapter.home.HomeViewModel;
 import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.profile.ProfileState;
@@ -11,8 +13,8 @@ import use_case.logout.LogoutOutputData;
 /*
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
- * Changes: uses the Profile view instead of LoggedIn; completes the lab's TODOs
- * (clears the profile state and clears the login screen).
+ * Changes: uses the Home and Profile views instead of LoggedIn; completes the lab's TODOs
+ * (clears the home and profile state and clears the login screen).
  */
 
 /**
@@ -20,20 +22,28 @@ import use_case.logout.LogoutOutputData;
  */
 public class LogoutPresenter implements LogoutOutputBoundary {
 
+    private final HomeViewModel homeViewModel;
     private final ProfileViewModel profileViewModel;
     private final ViewManagerModel viewManagerModel;
     private final LoginViewModel loginViewModel;
 
     public LogoutPresenter(ViewManagerModel viewManagerModel,
+                           HomeViewModel homeViewModel,
                            ProfileViewModel profileViewModel,
                            LoginViewModel loginViewModel) {
         this.viewManagerModel = viewManagerModel;
+        this.homeViewModel = homeViewModel;
         this.profileViewModel = profileViewModel;
         this.loginViewModel = loginViewModel;
     }
 
     @Override
     public void prepareSuccessView(LogoutOutputData response) {
+        // Clear the home and profile state
+        final HomeState homeState = homeViewModel.getState();
+        homeState.setUsername("");
+        this.homeViewModel.notifyStateChanged();
+
         final ProfileState profileState = profileViewModel.getState();
         profileState.setUsername("");
         this.profileViewModel.notifyStateChanged();

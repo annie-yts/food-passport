@@ -1,6 +1,6 @@
 package use_case.discover_dishes;
 
-import Entities.Dish;
+import entities.Dish;
 
 public class DiscoverDishesInteractor implements DiscoverDishesInputBoundary{
     private final ApiAccessBoundary mealDBObject;

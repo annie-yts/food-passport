@@ -1,7 +1,7 @@
 package use_case.stamp_dish;
 
-import Entities.Passport;
-import Entities.PlaceType;
+import entities.Passport;
+import entities.PlaceType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

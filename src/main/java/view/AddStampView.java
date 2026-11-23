@@ -1,6 +1,6 @@
 package view;
 
-import Entities.PlaceType;
+import entities.PlaceType;
 import interface_adapter.add_stamp.*;
 
 import javax.swing.BorderFactory;

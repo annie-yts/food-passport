@@ -1,6 +1,6 @@
 package data_access;
 
-import Entities.Passport;
+import entities.Passport;
 import use_case.stamp_dish.StampDishDataAccessInterface;
 
 import java.util.HashMap;

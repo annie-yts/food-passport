@@ -1,6 +1,6 @@
 package use_case.stamp_dish;
 
-import Entities.Passport;
+import entities.Passport;
 
 /**
  * Loads and saves passports for the Stamp Dish use case.

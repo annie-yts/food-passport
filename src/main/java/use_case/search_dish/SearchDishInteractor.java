@@ -1,6 +1,6 @@
 package use_case.search_dish;
 
-import Entities.Dish;
+import entities.Dish;
 import use_case.discover_dishes.ApiAccessBoundary;
 import use_case.discover_dishes.ApiException;
 import use_case.stamp_dish.CountryListDataAccessInterface;

@@ -1,8 +1,8 @@
 package use_case.stamp_dish;
 
-import Entities.Dish;
-import Entities.DishStamp;
-import Entities.Passport;
+import entities.Dish;
+import entities.DishStamp;
+import entities.Passport;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;

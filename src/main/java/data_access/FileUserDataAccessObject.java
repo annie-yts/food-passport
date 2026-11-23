@@ -1,7 +1,7 @@
 package data_access;
 
-import Entities.User;
-import Entities.UserFactory;
+import entities.User;
+import entities.UserFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import use_case.login.LoginUserDataAccessInterface;
@@ -18,7 +18,7 @@ import java.util.Map;
 /*
  * Adapted from the CSC207 ca-login example:
  * https://github.com/annie-yts/ca-login
- * Changes: uses Entities.User and Entities.UserFactory; saves users as JSON
+ * Changes: uses entities.User and entities.UserFactory; saves users as JSON
  * (userId, username, password) instead of CSV; creates the parent folder
  * (e.g. data/) if it doesn't exist; change password support to be added with that use case.
  */

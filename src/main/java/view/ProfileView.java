@@ -1,78 +1,52 @@
 package view;
 
-import interface_adapter.logout.LogoutController;
 import interface_adapter.profile.ProfileState;
 import interface_adapter.profile.ProfileViewModel;
 import interface_adapter.profile.ProfileViewModelListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /*
  * Adapted from the CSC207 ca-login example (LoggedInView):
  * https://github.com/annie-yts/ca-login
  * Changes: renamed to ProfileView; removed the change-password controls
- * (they move to the Account Settings screen); kept the username and Log Out button.
+ * (they move to the Account Settings screen); Log Out moved to the Home screen;
+ * added a Back button to Home.
  */
 
 /**
- * The View for the user's profile, shown after logging in.
+ * The Profile screen, reached from the Home screen. Stats, Export and
+ * Account Settings will be added here.
  */
-public class ProfileView extends JPanel implements ActionListener, ProfileViewModelListener {
+public class ProfileView extends JPanel implements ProfileViewModelListener {
 
     private final ProfileViewModel profileViewModel;
-    private LogoutController logoutController;
-    private Runnable onDiscoverDishes;
 
-    private final JLabel username;
-    private final JButton logOut;
+    private final JLabel username = new JLabel();
+    private final JButton back = new JButton("Back");
 
     public ProfileView(ProfileViewModel profileViewModel) {
         this.profileViewModel = profileViewModel;
         this.profileViewModel.addListener(this);
 
         final JLabel title = new JLabel("Profile");
+        title.setFont(title.getFont().deriveFont(Font.BOLD, 16f));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        final JLabel usernameInfo = new JLabel("Currently logged in: ");
-        username = new JLabel();
-
-        final JPanel buttons = new JPanel();
-        final JButton discoverDishes = new JButton("Discover Dishes");
-        buttons.add(discoverDishes);
-        discoverDishes.addActionListener(evt -> onDiscoverDishes.run());
-        logOut = new JButton("Log Out");
-        buttons.add(logOut);
-
-        logOut.addActionListener(this);
+        username.setAlignmentX(Component.CENTER_ALIGNMENT);
+        back.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
         this.add(title);
-        this.add(usernameInfo);
+        this.add(Box.createVerticalStrut(5));
         this.add(username);
-        this.add(buttons);
+        this.add(Box.createVerticalStrut(15));
+        this.add(back);
     }
 
-    /**
-     * React to a button click that results in evt.
-     * @param evt the ActionEvent to react to
-     */
-    @Override
-    public void actionPerformed(ActionEvent evt) {
-        if (evt.getSource().equals(logOut)) {
-            logoutController.execute();
-        }
-    }
-
-    public void setLogoutController(LogoutController logoutController) {
-        this.logoutController = logoutController;
-    }
-
-    public void setOnDiscoverDishes(Runnable onDiscoverDishes) {
-        this.onDiscoverDishes = onDiscoverDishes;
+    /** What happens when Back is clicked (connected in AppBuilder). */
+    public void setOnBack(Runnable action) {
+        back.addActionListener(evt -> action.run());
     }
 
     /**
@@ -81,7 +55,7 @@ public class ProfileView extends JPanel implements ActionListener, ProfileViewMo
     @Override
     public void stateChanged() {
         final ProfileState state = profileViewModel.getState();
-        username.setText(state.getUsername());
+        username.setText("Username: " + state.getUsername());
     }
 
     /**

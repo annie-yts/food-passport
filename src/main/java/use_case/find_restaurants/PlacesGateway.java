@@ -1,6 +1,6 @@
 package use_case.find_restaurants;
 
-import Entities.Restaurant;
+import entities.Restaurant;
 import java.util.List;
 import java.util.Set;
 
