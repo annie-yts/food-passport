@@ -1,7 +1,6 @@
 package use_case.discover_dishes;
 
 import Entities.Dish;
-import interface_adapter.discover_dishes.DiscoverDishesInputData;
 
 public class DiscoverDishesInteractor implements DiscoverDishesInputBoundary{
     private final ApiAccessBoundary mealDBObject;
@@ -33,16 +32,16 @@ public class DiscoverDishesInteractor implements DiscoverDishesInputBoundary{
                 int dishIndex = 0;
                 for (int i = dishStartIndex; (i < dishStartIndex + 6) && i < dishes.length; i++) {
                     String dishName = dishes[i].getName();
-                    String dishCountry = dishes[i].getCountry();
+                    String countryCode = dishes[i].getCountryCode();
                     String dishUrl = dishes[i].getThumbnailUrl();
                     if (dishUrl == null) {
                         DiscoverDishesOutputData outputData = new DiscoverDishesOutputData(dishName,
-                                dishCountry,
+                                countryCode,
                                 dishIndex);
                         discoverDishesPresenter.prepareSuccessView(outputData);
                     } else {
                         DiscoverDishesOutputData outputData = new DiscoverDishesOutputData(dishName,
-                            dishCountry,
+                            countryCode,
                             dishUrl,
                             dishIndex);
                         discoverDishesPresenter.prepareSuccessView(outputData);

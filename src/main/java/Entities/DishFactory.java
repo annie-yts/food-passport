@@ -6,12 +6,12 @@ package Entities;
 public class DishFactory {
     public Dish create(String id,
                        String name,
-                       String country,
+                       String countryCode,
                        String category,
                        String thumbnailUrl,
                        String instruction,
                        Boolean isManual) {
-        return new Dish(id, name, country, category, thumbnailUrl, instruction, isManual);
+        return new Dish(id, name, countryCode, category, thumbnailUrl, instruction, isManual);
     }
 }
 

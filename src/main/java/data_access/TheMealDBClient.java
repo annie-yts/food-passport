@@ -1,224 +1,96 @@
 package data_access;
 
+import Entities.Dish;
+import Entities.DishFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import use_case.discover_dishes.ApiAccessBoundary;
+import use_case.discover_dishes.ApiException;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import use_case.discover_dishes.ApiAccessBoundary;
-import Entities.Dish;
-import Entities.DishFactory;
-import use_case.discover_dishes.ApiException;
-
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TheMealDBClient implements ApiAccessBoundary {
+    private static final URI API_BASE = URI.create("https://www.themealdb.com/api/json/v1/1/");
+    private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(15);
 
-    @Override
-    public String[] getCountry() {
+    private final HttpClient client = HttpClient.newHttpClient();
+    private final DishFactory dishFactory = new DishFactory();
+    private final CountryMapping countries;
+    private final URI baseUri;
 
-        // Create http client
-        HttpClient client = HttpClient.newHttpClient();
+    public TheMealDBClient(CountryMapping countries) {
+        this(countries, API_BASE);
+    }
 
-
-        // Create http request
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(
-                        "https://www.themealdb.com/api/json/v1/1/list.php?a=list"))
-                .GET()
-                .build();
-
-        // get response
-        try {
-            HttpResponse<String> response = client.send(
-                request,
-                HttpResponse.BodyHandlers.ofString()
-            );
-
-            return getJsonInfo(response, "strCountry");
-        } catch (IOException e) {
-            throw new ApiException("API request failed", e);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new ApiException("API request interrupted", e);
-        }
-
+    TheMealDBClient(CountryMapping countries, URI baseUri) {
+        this.countries = countries;
+        this.baseUri = baseUri;
     }
 
     @Override
     public Dish[] getDish(String target, Boolean isSearchByDish) {
-        // Create http client
-        HttpClient client = HttpClient.newHttpClient();
-
-
-        if (isSearchByDish) {
-            return searchByDish(target, client);
-        } else {
-            return searchByCountry(target, client);
-        }
-    }
-
-
-    private Dish[] searchByDish(String dishName, HttpClient client) {
-
-        // Create http request
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(
-                        "https://www.themealdb.com/api/json/v1/1/search.php?s=" +
-                                URLEncoder.encode(dishName, StandardCharsets.UTF_8)))
-                .GET()
-                .build();
-
-        // get response
+        List<Dish> dishes = new ArrayList<>();
         try {
-            HttpResponse<String> response = client.send(
-                    request,
-                    HttpResponse.BodyHandlers.ofString()
-            );
-
-            String[] ids = getJsonInfo(response, "idMeal");
-            String[] names = getJsonInfo(response, "strMeal");
-            String[] categories = getJsonInfo(response, "strCategory");
-            String[] areas = getJsonInfo(response, "strCountry");
-            String[] instructions = getJsonInfo(response, "strInstructions");
-            String[] mealThumbUrls = getJsonInfo(response, "strMealThumb");
-            Dish[] dishes = new Dish[ids.length];
-            for (int i = 0; i < ids.length; i++) {
-                DishFactory dishFactory = new DishFactory();
-                Dish dish = dishFactory.create(
-                        ids[i],
-                        names[i],
-                        areas[i],
-                        categories[i],
-                        mealThumbUrls[i],
-                        instructions[i],
-                        false
-                );
-                dishes[i] = dish;
+            if (isSearchByDish) {
+                addDishes(dishes, requestMeals("search.php?s=", target), null);
             }
-            return dishes;
-
-        } catch (IOException e) {
-            throw new ApiException("API request failed", e);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new ApiException("API request interrupted", e);
-        }
-    }
-
-    private Dish[] searchByCountry(String country, HttpClient client) {
-        // Create http request
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(
-                        "https://www.themealdb.com/api/json/v1/1/filter.php?a=" +
-                                URLEncoder.encode(country, StandardCharsets.UTF_8)))
-                .GET()
-                .build();
-
-        // get response
-        try {
-            HttpResponse<String> response = client.send(
-                    request,
-                    HttpResponse.BodyHandlers.ofString()
-            );
-            String[] dishIds = getJsonInfo(response, "idMeal");
-            Dish[] dishes = new Dish[dishIds.length];
-            for (int i = 0; i < dishIds.length; i++) {
-                dishes[i] = searchById(dishIds[i], client);
+            else {
+                String area = countries.areaFor(target);
+                if (area != null) {
+                    JSONArray matches = requestMeals("filter.php?a=", area);
+                    for (int i = 0; i < matches.length(); i++) {
+                        String id = matches.getJSONObject(i).getString("idMeal");
+                        addDishes(dishes, requestMeals("lookup.php?i=", id), target);
+                    }
+                }
             }
-            return dishes;
-        } catch (IOException e) {
-            throw new ApiException("API request failed", e);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new ApiException("API request interrupted", e);
         }
-
+        catch (JSONException ex) {
+            throw new ApiException("Invalid TheMealDB response", ex);
+        }
+        return dishes.toArray(new Dish[0]);
     }
 
-    private Dish searchById(String id, HttpClient client) {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(
-                        "https://themealdb.com/api/json/v1/1/lookup.php?i=" + id))
-                .GET()
-                .build();
+    private void addDishes(List<Dish> dishes, JSONArray meals, String requestedCountryCode) {
+        for (int i = 0; i < meals.length(); i++) {
+            JSONObject meal = meals.getJSONObject(i);
+            String countryCode = countries.countryCodeFor(meal.optString("strCountry"), meal.optString("strArea"));
+            // The same area filter may return meals from more than one country.
+            if (countryCode != null && (requestedCountryCode == null || requestedCountryCode.equals(countryCode))) {
+                dishes.add(dishFactory.create(meal.getString("idMeal"), meal.getString("strMeal"), countryCode,
+                        meal.optString("strCategory", null), meal.optString("strMealThumb", null),
+                        meal.optString("strInstructions", null), false));
+            }
+        }
+    }
+
+    private JSONArray requestMeals(String endpoint, String value) {
+        URI uri = baseUri.resolve(endpoint + URLEncoder.encode(value, StandardCharsets.UTF_8));
+        HttpRequest request = HttpRequest.newBuilder(uri).timeout(REQUEST_TIMEOUT).GET().build();
         try {
-            HttpResponse<String> response = client.send(
-                    request,
-                    HttpResponse.BodyHandlers.ofString()
-            );
-            String[] ids = getJsonInfo(response, "idMeal");
-            String[] names = getJsonInfo(response, "strMeal");
-            String[] categories = getJsonInfo(response, "strCategory");
-            String[] areas = getJsonInfo(response, "strCountry");
-            String[] instructions = getJsonInfo(response, "strInstructions");
-            String[] mealThumbUrls = getJsonInfo(response, "strMealThumb");
-            DishFactory dishFactory = new DishFactory();
-            return dishFactory.create(
-                    ids[0],
-                    names[0],
-                    areas[0],
-                    categories[0],
-                    mealThumbUrls[0],
-                    instructions[0],
-                    false
-            );
-        } catch (IOException e) {
-            throw new ApiException("API request failed", e);
-        } catch (InterruptedException e) {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                throw new IOException("TheMealDB returned HTTP " + response.statusCode());
+            }
+            JSONObject body = new JSONObject(response.body());
+            return body.isNull("meals") ? new JSONArray() : body.getJSONArray("meals");
+        }
+        catch (IOException ex) {
+            throw new ApiException("TheMealDB request failed", ex);
+        }
+        catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            throw new ApiException("API request interrupted", e);
+            throw new ApiException("TheMealDB request interrupted", ex);
         }
-
     }
-
-    private String[] getJsonInfo(HttpResponse<String> response, String target) {
-        JsonObject json = JsonParser.parseString(
-                response.body()).getAsJsonObject();
-
-        JsonElement element = json.get("meals");
-
-        // avoid throw exception when there are no results found
-        if (element == null || element.isJsonNull()) {
-            return new String[0];
-        }
-
-        JsonArray jsonResults = element.getAsJsonArray();
-
-        //check whether there are results
-        if (jsonResults == null) {
-            return new String[0];
-        }
-
-        String[] results = new String[jsonResults.size()];
-
-        for (int i = 0; i < jsonResults.size(); i++) {
-            String result = jsonResults.get(i)
-                    .getAsJsonObject()
-                    .get(target).getAsString();
-            results[i] = result;
-        }
-
-        return results;
-    }
-
-//
-//    public static void main(String[] args) {
-//
-//        for (String s: GetCountry()) {
-//            System.out.println(s);
-//        }
-//
-//    }
 }
-
-

@@ -41,15 +41,15 @@ public class DiscoverDishesViewModel {
     }
 
 
-    public void notifyStateChanged(String dishName, String country, String imageUrl, int dishIndex) {
+    public void notifyStateChanged(String dishName, String countryCode, String imageUrl, int dishIndex) {
         for (DiscoverDishesViewModelListener listener : listeners) {
-            listener.stateChanged(dishName, country, imageUrl, dishIndex);
+            listener.stateChanged(dishName, countryCode, imageUrl, dishIndex);
         }
     }
 
-    public void notifyStateChanged(String dishName, String country, int dishIndex) {
+    public void notifyStateChanged(String dishName, String countryCode, int dishIndex) {
         for (DiscoverDishesViewModelListener listener : listeners) {
-            listener.stateChanged(dishName, country, dishIndex);
+            listener.stateChanged(dishName, countryCode, dishIndex);
         }
     }
 

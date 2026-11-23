@@ -1,6 +1,7 @@
 package app;
 
 import Entities.UserFactory;
+import data_access.CountryMapping;
 import data_access.FileUserDataAccessObject;
 import data_access.TheMealDBClient;
 import interface_adapter.ViewManagerModel;
@@ -63,7 +64,8 @@ public class AppBuilder {
     private ProfileView profileView;
     private LoginView loginView;
 
-    private final ApiAccessBoundary mealDbClient = new TheMealDBClient();
+    private final CountryMapping countryMapping = new CountryMapping();
+    private final ApiAccessBoundary mealDbClient = new TheMealDBClient(countryMapping);
     private DiscoverDishesViewModel discoverDishesViewModel;
     private DiscoverDishesView discoverDishesView;
 
@@ -138,7 +140,7 @@ public class AppBuilder {
 
     public AppBuilder addDiscoverDishesView() {
         discoverDishesViewModel = new DiscoverDishesViewModel();
-        discoverDishesView = new DiscoverDishesView(discoverDishesViewModel, mealDbClient);
+        discoverDishesView = new DiscoverDishesView(discoverDishesViewModel, countryMapping.getCountryNamesByCode());
         discoverDishesView.addBackToProfileButton(() -> {
             viewManagerModel.setState(ProfileViewModel.VIEW_NAME);
             viewManagerModel.notifyViewChanged();

@@ -1,6 +1,7 @@
 package interface_adapter.discover_dishes;
 
 import use_case.discover_dishes.DiscoverDishesInputBoundary;
+import use_case.discover_dishes.DiscoverDishesInputData;
 
 public class DiscoverDishesController {
 
