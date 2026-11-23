@@ -3,18 +3,18 @@ package use_case.discover_dishes;
 public class DiscoverDishesOutputData {
     private int indexOfDish;
     private String dishName;
-    private String country;
+    private String countryCode;
     private String imageUrl = null;
 
-    public DiscoverDishesOutputData(String dishName, String country, int indexOfDish) {
+    public DiscoverDishesOutputData(String dishName, String countryCode, int indexOfDish) {
         this.dishName = dishName;
-        this.country = country;
+        this.countryCode = countryCode;
         this.indexOfDish = indexOfDish;
     }
 
-    public DiscoverDishesOutputData(String dishName, String country, String imageUrl, int indexOfDish) {
+    public DiscoverDishesOutputData(String dishName, String countryCode, String imageUrl, int indexOfDish) {
         this.dishName = dishName;
-        this.country = country;
+        this.countryCode = countryCode;
         this.imageUrl = imageUrl;
         this.indexOfDish = indexOfDish;
     }
@@ -35,12 +35,12 @@ public class DiscoverDishesOutputData {
         this.dishName = dishName;
     }
 
-    public String getCountry() {
-        return country;
+    public String getCountryCode() {
+        return countryCode;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
 
     public String getImageUrl() {

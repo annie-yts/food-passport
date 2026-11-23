@@ -1,7 +1,7 @@
 package view;
-import data_access.TheMealDBClient;
+
 import interface_adapter.discover_dishes.*;
-import use_case.discover_dishes.*;
+import use_case.discover_dishes.ApiException;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -14,6 +14,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Font;
+import java.util.List;
+import java.util.Map;
 
 /* The View when user discover dishes*/
 public class DiscoverDishesView extends JPanel implements DiscoverDishesViewModelListener {
@@ -31,13 +33,10 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
     private final JButton selectCountry;
     private final JButton search;
 
-    //modules for data access
-    private final ApiAccessBoundary apiAccessObject;
+    private final Map<String, String> countryNamesByCode;
 
-
-    public DiscoverDishesView(DiscoverDishesViewModel discoverDishesViewModel, ApiAccessBoundary apiAccessObject) {
-
-        this.apiAccessObject = apiAccessObject;
+    public DiscoverDishesView(DiscoverDishesViewModel discoverDishesViewModel, Map<String, String> countryNamesByCode) {
+        this.countryNamesByCode = countryNamesByCode;
         this.discoverDishesViewModel = discoverDishesViewModel;
         discoverDishesViewModel.addListener(this);
 
@@ -60,18 +59,8 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
 
         //create the pop menu for countries
         JPopupMenu popupCountries = new JPopupMenu();
-        JList<String> countryList = new JList<>();
-
-        try{
-        countryList.setListData(apiAccessObject.getCountry());
-        } catch (ApiException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Network error!",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
+        List<String> countryCodes = List.copyOf(countryNamesByCode.keySet());
+        JList<String> countryList = new JList<>(countryCodes.stream().map(countryNamesByCode::get).toArray(String[]::new));
 
         countryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(countryList);
@@ -92,14 +81,14 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
                 new ListSelectionListener() {
                     @Override
                     public void valueChanged(ListSelectionEvent e) {
-                        String country = countryList.getSelectedValue();
-                        if (country != null) {
+                        int index = countryList.getSelectedIndex();
+                        if (index >= 0 && !e.getValueIsAdjusting()) {
                             // update current state
                             DiscoverDishesState currentState = discoverDishesViewModel.getState();
-                            currentState.setSearchTarget(country);
+                            currentState.setSearchTarget(countryCodes.get(index));
                             currentState.setSearchByDish(false);
                             discoverDishesViewModel.setState(currentState);
-                            selectCountry.setText(country);
+                            selectCountry.setText(countryList.getSelectedValue());
                             popupCountries.setVisible(false);
                             //reset dishInputField
                             dishInputField.setText(DiscoverDishesViewModel.DISH_INPUT_LABEL);
@@ -112,6 +101,7 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
                 new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         if (!dishInputField.getText().equals(DiscoverDishesViewModel.DISH_INPUT_LABEL)) {
+                            countryList.clearSelection();
                             selectCountry.setText(DiscoverDishesViewModel.COUNTRY_LABEL);
                             DiscoverDishesState currentState = discoverDishesViewModel.getState();
                             currentState.setSearchTarget(dishInputField.getText());
@@ -305,14 +295,14 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
 
 
     @Override
-    public void stateChanged(String dishName, String country, int dishIndex) {
+    public void stateChanged(String dishName, String countryCode, int dishIndex) {
 
         // Delete previous shown dishes
         DiscoverDishesState currState = discoverDishesViewModel.getState();
 
         // Add current dish
         JPanel thisDishCard = new DishCardPanel(dishName,
-                country,
+                countryNamesByCode.getOrDefault(countryCode, countryCode),
                 22 * ((dishIndex / 2) + 1) + // spaces between column based on given index
                         270 * (dishIndex / 2), // horizontal location of panel based on given index
                 200 - 100 * (int) Math.pow(-1, dishIndex)); // even index dish on first row of the view panel, vice versa
@@ -325,13 +315,13 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
     }
 
     @Override
-    public void stateChanged(String dishName, String country, String imageUrl, int dishIndex) {
+    public void stateChanged(String dishName, String countryCode, String imageUrl, int dishIndex) {
         // Delete previous shown dishes
         DiscoverDishesState currState = discoverDishesViewModel.getState();
 
         // Add current dish
         JPanel thisDishCard = new DishCardPanel(dishName,
-                country,
+                countryNamesByCode.getOrDefault(countryCode, countryCode),
                 imageUrl,
                 22 * ((dishIndex / 2) + 1) + // spaces between column based on given index
                         270 * (dishIndex / 2), // horizontal location of panel based on given index
@@ -392,29 +382,4 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
         backButton.addActionListener(evt -> onClick.run());
         this.add(backButton);
     }
-
-
-
-
-//    //temporary place main method here to build the view quickly
-//    public static void main(String[] args) {
-//        final JFrame application = new JFrame("Discover Dishes");
-//
-//        application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//        ApiAccessBoundary theMealDBObject = new TheMealDBClient();
-//        DiscoverDishesViewModel discoverDishesViewModel = new DiscoverDishesViewModel();
-//        DiscoverDishesView discoverDishesView = new DiscoverDishesView(
-//                discoverDishesViewModel,
-//                theMealDBObject
-//        );
-//        DiscoverDishesOutputBoundary discoverDishesPresenter = new DiscoverDishesPresenter(discoverDishesViewModel);
-//        DiscoverDishesInputBoundary interactor = new DiscoverDishesInteractor(theMealDBObject, discoverDishesPresenter);
-//        DiscoverDishesController dishesController = new DiscoverDishesController(interactor);
-//        discoverDishesView.setDiscoverDishesController(dishesController);
-//        application.setContentPane(discoverDishesView);
-//        //    application.pack();
-//        application.setSize(900, 600);
-//        application.setVisible(true);
-//    }
-
 }

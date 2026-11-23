@@ -26,13 +26,13 @@ public class DiscoverDishesPresenter implements DiscoverDishesOutputBoundary {
     @Override
     public void prepareSuccessView(DiscoverDishesOutputData outputData) {
         String dishName = outputData.getDishName();
-        String dishCountry = outputData.getCountry();
+        String countryCode = outputData.getCountryCode();
         String dishUrl = outputData.getImageUrl();
         int dishIndex = outputData.getIndexOfDish();
         if (dishUrl == null) {
-            discoverDishesViewModel.notifyStateChanged(dishName, dishCountry, dishIndex);
+            discoverDishesViewModel.notifyStateChanged(dishName, countryCode, dishIndex);
         } else {
-            discoverDishesViewModel.notifyStateChanged(dishName, dishCountry, dishUrl, dishIndex);
+            discoverDishesViewModel.notifyStateChanged(dishName, countryCode, dishUrl, dishIndex);
         }
     }
 
