@@ -130,7 +130,7 @@ This use case covers everything tied to the user's account: authentication, acco
 
 **Alternative flows**
 - Address left empty → "Address cannot be empty."
-- Radius is zero or negative → "Radius must be greater than 0."
+- Radius is not a positive number → "Radius must be greater than 0."
 - Address not found → "Address not found".
 - No matching restaurants in range → system suggests increasing the radius.
 - Country has no mapped OSM tags → system says nearby search isn't available for that country.

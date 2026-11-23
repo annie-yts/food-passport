@@ -14,6 +14,7 @@ public class FindRestaurantsInteractor implements FindRestaurantsInputBoundary {
     private final GeocodingGateway geocoder;
     private final PlacesGateway places;
     private final FindRestaurantsOutputBoundary presenter;
+    private static final double MAX_RADIUS_KM = 50;
 
     public FindRestaurantsInteractor(CountryMappingGateway mapping, GeocodingGateway geocoder, PlacesGateway places,
                                      FindRestaurantsOutputBoundary presenter) {
@@ -29,8 +30,13 @@ public class FindRestaurantsInteractor implements FindRestaurantsInputBoundary {
             presenter.prepareFailView("Address cannot be empty.");
             return;
         }
-        if (in.radiusKm() <= 0) {
+        double radius = in.radiusKm();
+        if (Double.isNaN(radius) || Double.isInfinite(radius) || radius <= 0) {
             presenter.prepareFailView("Radius must be greater than 0.");
+            return;
+        }
+        if (radius > MAX_RADIUS_KM) {
+            presenter.prepareFailView("Radius cannot be more than " + (int) MAX_RADIUS_KM + "km.");
             return;
         }
 
