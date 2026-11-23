@@ -8,6 +8,7 @@ import use_case.discover_dishes.ApiException;
 import use_case.stamp_dish.CountryListDataAccessInterface;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,11 +21,6 @@ class SearchDishInteractorTest {
         String lastQuery;
         Boolean lastSearchByDish;
         int calls = 0;
-
-        @Override
-        public String[] getCountry() {
-            return new String[0];
-        }
 
         @Override
         public Dish[] getDish(String target, Boolean isSearchByDish) {
@@ -41,8 +37,8 @@ class SearchDishInteractorTest {
     /** Only knows two countries. */
     static class FakeCountryList implements CountryListDataAccessInterface {
         @Override
-        public List<String> getAllCountries() {
-            return List.of("Thailand", "Spain");
+        public Map<String, String> getCountryNamesByCode() {
+            return Map.of("THA", "Thailand", "ESP", "Spain");
         }
     }
 
@@ -79,47 +75,50 @@ class SearchDishInteractorTest {
         interactor = new SearchDishInteractor(api, new FakeCountryList(), presenter);
     }
 
-    /** Makes a dish the way Andy's client would. */
-    private Dish dish(String id, String name, String country) {
-        return new Dish(id, name, country, "Seafood", "http://img", "", false);
+    /** Makes a dish the way Andy's client would (country as an ISO code). */
+    private Dish dish(String id, String name, String countryCode) {
+        return new Dish(id, name, countryCode, "Seafood", "http://img", "", false);
     }
 
     @Test
     void knownCountryIsKept() {
-        api.dishesToReturn = new Dish[] {dish("53191", "Pad Thai", "Thailand")};
+        api.dishesToReturn = new Dish[] {dish("53191", "Pad Thai", "THA")};
 
         interactor.execute("pad");
 
         SearchDishOutputData.Suggestion s = presenter.lastSuccess.getSuggestions().get(0);
         assertEquals("53191", s.getDishId());
         assertEquals("Pad Thai", s.getDishName());
-        assertEquals("Thailand", s.getCountry());
+        assertEquals("THA", s.getCountryCode());
+        assertEquals("Thailand", s.getCountryName());
     }
 
     @Test
     void unknownCountryBecomesNull() {
-        api.dishesToReturn = new Dish[] {dish("1", "Mystery Stew", "Atlantis")};
+        api.dishesToReturn = new Dish[] {dish("1", "Mystery Stew", "ATL")};
 
         interactor.execute("stew");
 
-        assertNull(presenter.lastSuccess.getSuggestions().get(0).getCountry());
+        SearchDishOutputData.Suggestion s = presenter.lastSuccess.getSuggestions().get(0);
+        assertNull(s.getCountryCode());
+        assertNull(s.getCountryName());
     }
 
     @Test
     void mixOfKnownAndUnknownCountries() {
         api.dishesToReturn = new Dish[] {
-                dish("1", "Pad Thai", "Thailand"),
-                dish("2", "Mystery Stew", "Atlantis"),
-                dish("3", "Padron peppers", "Spain")
+                dish("1", "Pad Thai", "THA"),
+                dish("2", "Mystery Stew", "ATL"),
+                dish("3", "Padron peppers", "ESP")
         };
 
         interactor.execute("pad");
 
         List<SearchDishOutputData.Suggestion> results = presenter.lastSuccess.getSuggestions();
         assertEquals(3, results.size());
-        assertEquals("Thailand", results.get(0).getCountry());
-        assertNull(results.get(1).getCountry());
-        assertEquals("Spain", results.get(2).getCountry());
+        assertEquals("Thailand", results.get(0).getCountryName());
+        assertNull(results.get(1).getCountryCode());
+        assertEquals("Spain", results.get(2).getCountryName());
     }
 
     @Test
@@ -152,7 +151,7 @@ class SearchDishInteractorTest {
 
     @Test
     void queryIsTrimmedAndSearchesByDish() {
-        api.dishesToReturn = new Dish[] {dish("53191", "Pad Thai", "Thailand")};
+        api.dishesToReturn = new Dish[] {dish("53191", "Pad Thai", "THA")};
 
         interactor.execute("  pad  ");
 

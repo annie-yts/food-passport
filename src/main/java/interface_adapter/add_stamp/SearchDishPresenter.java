@@ -26,7 +26,7 @@ public class SearchDishPresenter implements SearchDishOutputBoundary {
         AddStampState state = viewModel.getState();
         List<DishSuggestion> suggestions = new ArrayList<>();
         for (SearchDishOutputData.Suggestion s : outputData.getSuggestions()) {
-            suggestions.add(new DishSuggestion(s.getDishId(), s.getDishName(), s.getCountry(),
+            suggestions.add(new DishSuggestion(s.getDishId(), s.getDishName(), s.getCountryCode(), s.getCountryName(),
                     s.getCategory(), s.getThumbnailUrl()));
         }
         state.setSuggestions(suggestions);

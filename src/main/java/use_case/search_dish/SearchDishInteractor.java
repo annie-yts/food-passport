@@ -7,6 +7,7 @@ import use_case.stamp_dish.CountryListDataAccessInterface;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interactor for the Search Dish use case. Searches TheMealDB by dish name
@@ -48,16 +49,20 @@ public class SearchDishInteractor implements SearchDishInputBoundary {
             presenter.prepareNoResultsView(query);
             return;
         }
+        Map<String, String> countryNames = countryList.getCountryNamesByCode();
         List<SearchDishOutputData.Suggestion> suggestions = new ArrayList<>();
         for (Dish dish : dishes) {
-            String country;
-            if (countryList.getAllCountries().contains(dish.getCountry())) {
-                country = dish.getCountry();
+            String countryCode;
+            String countryName;
+            if (countryNames.containsKey(dish.getCountryCode())) {
+                countryCode = dish.getCountryCode();
+                countryName = countryNames.get(countryCode);
             } else {
-                country = null;
+                countryCode = null;
+                countryName = null;
             }
-            suggestions.add(new SearchDishOutputData.Suggestion(dish.getId(), dish.getName(), country,
-                    dish.getCategory(), dish.getThumbnailUrl()));
+            suggestions.add(new SearchDishOutputData.Suggestion(dish.getId(), dish.getName(), countryCode,
+                    countryName, dish.getCategory(), dish.getThumbnailUrl()));
         }
         presenter.prepareSuccessView(new SearchDishOutputData(suggestions));
     }

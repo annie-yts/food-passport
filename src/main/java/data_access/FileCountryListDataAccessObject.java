@@ -2,33 +2,26 @@ package data_access;
 
 import use_case.stamp_dish.CountryListDataAccessInterface;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
+import java.util.Map;
 
 /**
- * Loads the list of country names from the bundled countries.txt file.
+ * Gives the Stamp Dish use cases the country list from the shared country_mapping.json,
+ * by reading it through {@link CountryMapping}.
  */
 public class FileCountryListDataAccessObject implements CountryListDataAccessInterface {
-    private final List<String> countries;
+    private final CountryMapping countryMapping;
 
     /**
-     * Reads countries.txt once when the object is created.
+     * Creates the data access object.
      *
-     * @throws IllegalStateException if the file can't be read
+     * @param countryMapping the shared country mapping
      */
-    public FileCountryListDataAccessObject() {
-        try {
-            List<String> lines = Files.readAllLines(Path.of("src/main/resources/countries.txt"));
-            countries = List.copyOf(lines);
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not read countries.txt", e);
-        }
+    public FileCountryListDataAccessObject(CountryMapping countryMapping) {
+        this.countryMapping = countryMapping;
     }
 
     @Override
-    public List<String> getAllCountries() {
-        return countries;
+    public Map<String, String> getCountryNamesByCode() {
+        return countryMapping.getCountryNamesByCode();
     }
 }

@@ -24,7 +24,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The Add Stamp screen: search for a dish (or enter one manually), fill in the
@@ -46,6 +48,7 @@ public class AddStampView extends JPanel implements AddStampViewModelListener {
     private final JCheckBox manualCheckBox = new JCheckBox(AddStampViewModel.MANUAL_LABEL);
     private final JTextField dishNameField = new JTextField(20);
     private final JComboBox<String> countryBox = new JComboBox<>();
+    private final List<String> countryCodes = new ArrayList<>();
 
     private final JTextField dateField = new JTextField(10);
     private final JComboBox<PlaceType> placeBox = new JComboBox<>(PlaceType.values());
@@ -147,7 +150,7 @@ public class AddStampView extends JPanel implements AddStampViewModelListener {
         if (manualCheckBox.isSelected()) {
             dishId = null;
             dishName = dishNameField.getText();
-            country = (String) countryBox.getSelectedItem();
+            country = getSelectedCountryCode();
             category = null;
             thumbnailUrl = null;
         } else {
@@ -160,10 +163,10 @@ public class AddStampView extends JPanel implements AddStampViewModelListener {
             dishName = selected.getDishName();
             category = selected.getCategory();
             thumbnailUrl = selected.getThumbnailUrl();
-            if (selected.getCountry() == null) {
-                country = (String) countryBox.getSelectedItem();
+            if (selected.getCountryCode() == null) {
+                country = getSelectedCountryCode();
             } else {
-                country = selected.getCountry();
+                country = selected.getCountryCode();
             }
         }
 
@@ -186,21 +189,23 @@ public class AddStampView extends JPanel implements AddStampViewModelListener {
         suggestionListModel.clear();
         for (DishSuggestion suggestion : state.getSuggestions()) {
             String countryText;
-            if (suggestion.getCountry() == null) {
+            if (suggestion.getCountryCode() == null) {
                 countryText = "pick a country";
             } else {
-                countryText = suggestion.getCountry();
+                countryText = suggestion.getCountryName();
             }
             suggestionListModel.addElement(suggestion.getDishName() + " - " + countryText);
         }
 
         manualCheckBox.setSelected(state.isManualMode());
 
-        List<String> countries = state.getCountries();
+        Map<String, String> countries = state.getCountries();
         if (countryBox.getItemCount() != countries.size()) {
             countryBox.removeAllItems();
-            for (String country : countries) {
-                countryBox.addItem(country);
+            countryCodes.clear();
+            for (Map.Entry<String, String> entry : countries.entrySet()) {
+                countryCodes.add(entry.getKey());
+                countryBox.addItem(entry.getValue());
             }
         }
 
@@ -235,8 +240,17 @@ public class AddStampView extends JPanel implements AddStampViewModelListener {
 
         suggestionList.setEnabled(!manual);
         dishNameField.setEnabled(manual);
-        countryBox.setEnabled(manual || (selected != null && selected.getCountry() == null));
+        countryBox.setEnabled(manual || (selected != null && selected.getCountryCode() == null));
         restaurantField.setEnabled(placeBox.getSelectedItem() == PlaceType.RESTAURANT);
+    }
+
+    /** Returns the ISO code of the country picked in the dropdown, or null if none is picked. */
+    private String getSelectedCountryCode() {
+        int index = countryBox.getSelectedIndex();
+        if (index < 0) {
+            return null;
+        }
+        return countryCodes.get(index);
     }
 
     /** Returns the suggestion picked in the list, or null if none is picked. */

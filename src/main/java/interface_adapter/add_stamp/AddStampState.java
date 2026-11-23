@@ -1,7 +1,9 @@
 package interface_adapter.add_stamp;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Everything the Add Stamp screen needs to draw itself.
@@ -10,7 +12,7 @@ public class AddStampState {
     private String userId = "";
     private List<DishSuggestion> suggestions = new ArrayList<>();
     private boolean manualMode;
-    private List<String> countries = new ArrayList<>();
+    private Map<String, String> countries = new LinkedHashMap<>();
     private String errorMessage = "";
     private String successMessage = "";
     private String passportSummary = "";
@@ -28,7 +30,7 @@ public class AddStampState {
         return manualMode;
     }
 
-    public List<String> getCountries() {
+    public Map<String, String> getCountries() {
         return countries;
     }
 
@@ -60,7 +62,7 @@ public class AddStampState {
         this.manualMode = manualMode;
     }
 
-    public void setCountries(List<String> countries) {
+    public void setCountries(Map<String, String> countries) {
         this.countries = countries;
     }
 

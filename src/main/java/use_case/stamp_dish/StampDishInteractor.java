@@ -37,7 +37,7 @@ public class StampDishInteractor implements StampDishInputBoundary {
             presenter.prepareFailView("Enter a dish name.");
             return;
         }
-        if (input.getCountry() == null || !countryList.getAllCountries().contains(input.getCountry())) {
+        if (input.getCountry() == null || !countryList.getCountryNamesByCode().containsKey(input.getCountry())) {
             presenter.prepareFailView("Pick a country.");
             return;
         }
@@ -71,7 +71,8 @@ public class StampDishInteractor implements StampDishInputBoundary {
                 input.getRating(), input.getNotes(), input.getRestaurantName());
         passport.addStamp(dishStamp);
         passportDataAccess.savePassport(passport);
-        StampDishOutputData outputData = new StampDishOutputData(input.getDishName(), input.getCountry(), isNew,
+        StampDishOutputData outputData = new StampDishOutputData(input.getDishName(),
+                countryList.getCountryNamesByCode().get(input.getCountry()), isNew,
                 passport.getStamps().size(), passport.countriesTried().size());
         presenter.prepareSuccessView(outputData);
     }

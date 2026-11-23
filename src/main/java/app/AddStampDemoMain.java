@@ -1,5 +1,6 @@
 package app;
 
+import data_access.CountryMapping;
 import data_access.FileCountryListDataAccessObject;
 import data_access.InMemoryPassportDataAccessObject;
 import data_access.TheMealDBClient;
@@ -27,14 +28,15 @@ public class AddStampDemoMain {
      * @param args not used
      */
     public static void main(String[] args) {
-        FileCountryListDataAccessObject countryList = new FileCountryListDataAccessObject();
+        CountryMapping countryMapping = new CountryMapping();
+        FileCountryListDataAccessObject countryList = new FileCountryListDataAccessObject(countryMapping);
         InMemoryPassportDataAccessObject passportDataAccess = new InMemoryPassportDataAccessObject();
-        TheMealDBClient api = new TheMealDBClient();
+        TheMealDBClient api = new TheMealDBClient(countryMapping);
 
         AddStampViewModel viewModel = new AddStampViewModel();
         AddStampState state = viewModel.getState();
         state.setUserId("demo-user");
-        state.setCountries(countryList.getAllCountries());
+        state.setCountries(countryList.getCountryNamesByCode());
         state.setPassportSummary("Passport: 0 stamps · 0 countries");
 
         SearchDishPresenter searchPresenter = new SearchDishPresenter(viewModel);

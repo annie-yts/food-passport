@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,8 +15,8 @@ class StampDishInteractorTest {
     /** Only knows two countries. */
     static class FakeCountryList implements CountryListDataAccessInterface {
         @Override
-        public List<String> getAllCountries() {
-            return List.of("Thailand", "Ethiopia");
+        public Map<String, String> getCountryNamesByCode() {
+            return Map.of("THA", "Thailand", "ETH", "Ethiopia");
         }
     }
 
@@ -72,17 +71,18 @@ class StampDishInteractorTest {
 
     @Test
     void firstStampFromCountryIsNew() {
-        interactor.execute(input("53191", "Pad Thai", "Thailand", "2026-11-01", 5));
+        interactor.execute(input("53191", "Pad Thai", "THA", "2026-11-01", 5));
 
         assertNull(presenter.lastError);
         assertTrue(presenter.lastSuccess.isNewCountry());
         assertEquals(1, presenter.lastSuccess.getTotalStamps());
+        assertEquals("Thailand", presenter.lastSuccess.getCountry());
     }
 
     @Test
     void secondStampSameCountryIsNotNew() {
-        interactor.execute(input("53191", "Pad Thai", "Thailand", "2026-11-01", 5));
-        interactor.execute(input("52774", "Pad See Ew", "Thailand", "2026-11-02", 4));
+        interactor.execute(input("53191", "Pad Thai", "THA", "2026-11-01", 5));
+        interactor.execute(input("52774", "Pad See Ew", "THA", "2026-11-02", 4));
 
         assertFalse(presenter.lastSuccess.isNewCountry());
         assertEquals(2, presenter.lastSuccess.getTotalStamps());
@@ -91,8 +91,8 @@ class StampDishInteractorTest {
 
     @Test
     void twoCountriesCounted() {
-        interactor.execute(input("53191", "Pad Thai", "Thailand", "2026-11-01", 5));
-        interactor.execute(input(null, "Injera", "Ethiopia", "2026-11-02", 4));
+        interactor.execute(input("53191", "Pad Thai", "THA", "2026-11-01", 5));
+        interactor.execute(input(null, "Injera", "ETH", "2026-11-02", 4));
 
         assertTrue(presenter.lastSuccess.isNewCountry());
         assertEquals(2, presenter.lastSuccess.getTotalCountries());
@@ -100,7 +100,7 @@ class StampDishInteractorTest {
 
     @Test
     void futureDateFails() {
-        interactor.execute(input("53191", "Pad Thai", "Thailand", "2099-01-01", 5));
+        interactor.execute(input("53191", "Pad Thai", "THA", "2099-01-01", 5));
 
         assertNotNull(presenter.lastError);
         assertNull(presenter.lastSuccess);
@@ -108,7 +108,7 @@ class StampDishInteractorTest {
 
     @Test
     void badDateTextFails() {
-        interactor.execute(input("53191", "Pad Thai", "Thailand", "nov 3", 5));
+        interactor.execute(input("53191", "Pad Thai", "THA", "nov 3", 5));
 
         assertNotNull(presenter.lastError);
         assertNull(presenter.lastSuccess);
@@ -116,7 +116,7 @@ class StampDishInteractorTest {
 
     @Test
     void ratingTooLowFails() {
-        interactor.execute(input("53191", "Pad Thai", "Thailand", "2026-11-01", 0));
+        interactor.execute(input("53191", "Pad Thai", "THA", "2026-11-01", 0));
 
         assertNotNull(presenter.lastError);
         assertNull(presenter.lastSuccess);
@@ -124,7 +124,7 @@ class StampDishInteractorTest {
 
     @Test
     void ratingTooHighFails() {
-        interactor.execute(input("53191", "Pad Thai", "Thailand", "2026-11-01", 6));
+        interactor.execute(input("53191", "Pad Thai", "THA", "2026-11-01", 6));
 
         assertNotNull(presenter.lastError);
         assertNull(presenter.lastSuccess);
@@ -148,7 +148,7 @@ class StampDishInteractorTest {
 
     @Test
     void blankDishNameFails() {
-        interactor.execute(input(null, "   ", "Thailand", "2026-11-01", 5));
+        interactor.execute(input(null, "   ", "THA", "2026-11-01", 5));
 
         assertNotNull(presenter.lastError);
         assertNull(presenter.lastSuccess);
@@ -156,14 +156,14 @@ class StampDishInteractorTest {
 
     @Test
     void failedStampIsNotSaved() {
-        interactor.execute(input("53191", "Pad Thai", "Thailand", "2026-11-01", 0));
+        interactor.execute(input("53191", "Pad Thai", "THA", "2026-11-01", 0));
 
         assertEquals(0, dataAccess.getPassport("demo-user").getStamps().size());
     }
 
     @Test
     void manualDishGetsGeneratedId() {
-        interactor.execute(input(null, "Injera", "Ethiopia", "2026-11-01", 4));
+        interactor.execute(input(null, "Injera", "ETH", "2026-11-01", 4));
 
         var stamp = dataAccess.getPassport("demo-user").getStamps().get(0);
         assertTrue(stamp.getDish().isManual());
@@ -172,7 +172,7 @@ class StampDishInteractorTest {
 
     @Test
     void searchedDishKeepsItsId() {
-        interactor.execute(input("53191", "Pad Thai", "Thailand", "2026-11-01", 5));
+        interactor.execute(input("53191", "Pad Thai", "THA", "2026-11-01", 5));
 
         var stamp = dataAccess.getPassport("demo-user").getStamps().get(0);
         assertFalse(stamp.getDish().isManual());
