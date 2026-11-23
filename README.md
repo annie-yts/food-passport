@@ -123,15 +123,19 @@ This use case covers everything tied to the user's account: authentication, acco
 
 ### Use Case 5: Find Restaurants Nearby
 **Main flow**
-1. User arrives with a country (from Use Case 4) and enters an address or neighbourhood and a radius.
+1. User arrives with a country (from Use Case 4) and enters an address or neighbourhood and a radius in km.
 2. System geocodes the address (Nominatim).
 3. System uses the mapping table to get the OSM cuisine tags for that country (e.g. Japan → `japanese`, `sushi`, `ramen`), then queries OpenStreetMap (Overpass) for restaurants with any of those tags.
-4. System lists results sorted by distance, with name, address, and matching tags.
+4. System lists results sorted by distance, with name, address, matching tags, and distance in km.
 
 **Alternative flows**
-- Address not found → error message.
+- Address left empty → "Address cannot be empty."
+- Radius is not a positive number → "Radius must be greater than 0."
+- Radius over 50 km → "Radius cannot be more than 50km."
+- Address not found → "Address not found."
 - No matching restaurants in range → system suggests increasing the radius.
 - Country has no mapped OSM tags → system says nearby search isn't available for that country.
+- Nominatim or Overpass can't be reached → "Couldn't reach the map service. Please try again later."
 
 *This use case is for discovery only. It never creates stamps.*
 
@@ -244,6 +248,7 @@ The OSM column below shows the intended tag mappings for nearby restaurant searc
 
 **Design patterns with a real job to do**
 - **Adapter:** each gateway translates an external API's format (TheMealDB areas, OSM `cuisine` tags) into our own `Dish`, `Country` and `Restaurant` Entities, using the mapping table.
+- In Use Case 5, NominatimGeocodingGateway and OverpassPlacesGateway implement GeocodingGateway and PlacesGateway. FindRestaurantsInteractor depends only on those interfaces, so it is tested with fake gateways and no network.
 - **Decorator:** `CachingDishGateway` / `CachingPlacesGateway` wrap the real gateways. They cut API calls, respect OSM usage limits, and keep the app usable offline.
 - **Observer:** stamping a dish publishes an event; the map and profile views listen and refresh. (If we reach the badges stretch story, the badge checker listens to the same event.)
 - **Strategy (stretch):** each badge rule is its own class, so adding a badge doesn't touch existing code.
