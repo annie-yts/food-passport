@@ -1,8 +1,13 @@
 package app;
 
 import Entities.UserFactory;
+import data_access.CountryMapping;
 import data_access.FileUserDataAccessObject;
+import data_access.TheMealDBClient;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.discover_dishes.DiscoverDishesController;
+import interface_adapter.discover_dishes.DiscoverDishesPresenter;
+import interface_adapter.discover_dishes.DiscoverDishesViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -12,6 +17,10 @@ import interface_adapter.profile.ProfileViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
+import use_case.discover_dishes.ApiAccessBoundary;
+import use_case.discover_dishes.DiscoverDishesInputBoundary;
+import use_case.discover_dishes.DiscoverDishesInteractor;
+import use_case.discover_dishes.DiscoverDishesOutputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -21,10 +30,7 @@ import use_case.logout.LogoutOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import view.LoginView;
-import view.ProfileView;
-import view.SignupView;
-import view.ViewManager;
+import view.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,6 +64,11 @@ public class AppBuilder {
     private ProfileView profileView;
     private LoginView loginView;
 
+    private final CountryMapping countryMapping = new CountryMapping();
+    private final ApiAccessBoundary mealDbClient = new TheMealDBClient(countryMapping);
+    private DiscoverDishesViewModel discoverDishesViewModel;
+    private DiscoverDishesView discoverDishesView;
+
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
         cardPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
@@ -80,6 +91,11 @@ public class AppBuilder {
     public AppBuilder addProfileView() {
         profileViewModel = new ProfileViewModel();
         profileView = new ProfileView(profileViewModel);
+
+        profileView.setOnDiscoverDishes(() -> {
+            viewManagerModel.setState(DiscoverDishesViewModel.VIEW_NAME);
+            viewManagerModel.notifyViewChanged();
+        });
         cardPanel.add(profileView, ProfileViewModel.VIEW_NAME);
         return this;
     }
@@ -119,6 +135,27 @@ public class AppBuilder {
 
         final LogoutController logoutController = new LogoutController(logoutInteractor);
         profileView.setLogoutController(logoutController);
+        return this;
+    }
+
+    public AppBuilder addDiscoverDishesView() {
+        discoverDishesViewModel = new DiscoverDishesViewModel();
+        discoverDishesView = new DiscoverDishesView(discoverDishesViewModel, countryMapping.getCountryNamesByCode());
+        discoverDishesView.addBackToProfileButton(() -> {
+            viewManagerModel.setState(ProfileViewModel.VIEW_NAME);
+            viewManagerModel.notifyViewChanged();
+        });
+        cardPanel.add(discoverDishesView, DiscoverDishesViewModel.VIEW_NAME);
+        return this;
+    }
+
+    public AppBuilder addDiscoverDishesUseCase() {
+        final DiscoverDishesOutputBoundary presenter =
+                new DiscoverDishesPresenter(discoverDishesViewModel);
+        final DiscoverDishesInputBoundary interactor =
+                new DiscoverDishesInteractor(mealDbClient, presenter);
+        final DiscoverDishesController controller = new DiscoverDishesController(interactor);
+        discoverDishesView.setDiscoverDishesController(controller);
         return this;
     }
 

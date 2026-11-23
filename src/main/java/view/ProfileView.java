@@ -24,6 +24,7 @@ public class ProfileView extends JPanel implements ActionListener, ProfileViewMo
 
     private final ProfileViewModel profileViewModel;
     private LogoutController logoutController;
+    private Runnable onDiscoverDishes;
 
     private final JLabel username;
     private final JButton logOut;
@@ -39,6 +40,9 @@ public class ProfileView extends JPanel implements ActionListener, ProfileViewMo
         username = new JLabel();
 
         final JPanel buttons = new JPanel();
+        final JButton discoverDishes = new JButton("Discover Dishes");
+        buttons.add(discoverDishes);
+        discoverDishes.addActionListener(evt -> onDiscoverDishes.run());
         logOut = new JButton("Log Out");
         buttons.add(logOut);
 
@@ -65,6 +69,10 @@ public class ProfileView extends JPanel implements ActionListener, ProfileViewMo
 
     public void setLogoutController(LogoutController logoutController) {
         this.logoutController = logoutController;
+    }
+
+    public void setOnDiscoverDishes(Runnable onDiscoverDishes) {
+        this.onDiscoverDishes = onDiscoverDishes;
     }
 
     /**

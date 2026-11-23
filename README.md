@@ -207,7 +207,9 @@ The application supports multiple independent users on a single shared computer.
 
 ## Country Mapping Table
 
-A bundled file (`country_mapping.json`) that connects each data source's labels to our country list. It's loaded through a `CountryMappingGateway`, so use cases never see raw labels.
+UC4 loads `src/main/resources/country_mapping.json` at startup, so the country picker works offline. It displays country names and passes ISO 3166-1 alpha-3 codes to dish search. TheMealDB's adapter translates those codes to area labels for requests and converts results back to country codes. Update the bundled file when TheMealDB adds countries. [TheMealDB area list](https://www.themealdb.com/api/json/v1/1/list.php?a=list)
+
+The OSM column below shows the intended tag mappings for nearby restaurant search.
 
 | Country | TheMealDB area | OSM cuisine tags |
 |---|---|---|
@@ -217,7 +219,7 @@ A bundled file (`country_mapping.json`) that connects each data source's labels 
 | … | … | … |
 
 **Rules**
-- Each TheMealDB area maps to at most one country.
+- Several countries can share a TheMealDB area label. Dish search uses the meal's country name when present. An area label alone identifies a country only if the mapping is unique. UC4 skips dishes without a mapped country.
 - An OSM tag maps to a country only if it clearly belongs to that country's food. Generic tags (`burger`, `ice_cream`, `coffee_shop`) and broad regional ones (`asian`, `middle_eastern`) are left out.
 - OSM tags can list several values (`italian;pizza`). We split them and match each value.
 
