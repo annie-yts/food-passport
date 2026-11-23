@@ -1,22 +1,41 @@
 package Entities;
 
-public class User {
-    private String userId;
-    private String userName;
-    private String passwordHash;
+/*
+ * Adapted from the CSC207 ca-login example:
+ * https://github.com/annie-yts/ca-login
+ * Changes: added userId, setters for change username/password.
+ */
 
-    public User(String userId, String userName, String passwordHash) {
+/**
+ * A simple entity representing a user. Users have a user ID, a username and a password.
+ */
+public class User {
+
+    private final String userId;
+    private String userName;
+    private String password;
+
+    /**
+     * Creates a new user with the given ID, non-empty name and non-empty password.
+     * @param userId the unique user ID
+     * @param userName the username
+     * @param password the password
+     * @throws IllegalArgumentException if the password or name are empty
+     */
+    public User(String userId, String userName, String password) {
+        if ("".equals(userName)) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
+        if ("".equals(password)) {
+            throw new IllegalArgumentException("Password cannot be empty");
+        }
         this.userId = userId;
         this.userName = userName;
-        this.passwordHash = passwordHash;
+        this.password = password;
     }
 
     public String getUserId() {
         return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getUserName() {
@@ -24,8 +43,20 @@ public class User {
     }
 
     public void setUserName(String userName) {
+        if ("".equals(userName)) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
         this.userName = userName;
     }
 
-    // Haven't created functions for passwordHash yet, since I'm not sure abt the logic of login
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        if ("".equals(password)) {
+            throw new IllegalArgumentException("Password cannot be empty");
+        }
+        this.password = password;
+    }
 }
