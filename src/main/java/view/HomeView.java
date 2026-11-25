@@ -22,6 +22,7 @@ public class HomeView extends JPanel implements HomeViewModelListener {
     private final JButton discover = new JButton("Discover");
     private final JButton profile = new JButton("Profile");
     private final JButton logOut = new JButton("Log Out");
+    private final JButton findRestaurants = new JButton("Find Restaurants");
 
     private LogoutController logoutController;
 
@@ -34,9 +35,9 @@ public class HomeView extends JPanel implements HomeViewModelListener {
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         loggedInAs.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // The four main buttons in a 2 x 2 grid
-        final JPanel grid = new JPanel(new GridLayout(2, 2, 10, 10));
-        for (JButton button : new JButton[] {addStamp, worldMap, discover, profile}) {
+        // The main buttons in a 3 x 2 grid
+        final JPanel grid = new JPanel(new GridLayout(3, 2, 10, 10));
+        for (JButton button : new JButton[] {addStamp, worldMap, discover, findRestaurants, profile}) {
             button.setPreferredSize(new Dimension(150, 50));
             grid.add(button);
         }
@@ -74,6 +75,9 @@ public class HomeView extends JPanel implements HomeViewModelListener {
     public void setOnDiscover(Runnable action) {
         discover.addActionListener(evt -> action.run());
     }
+
+    /** What happens when Find Restaurants is clicked (connected in AppBuilder). */
+    public void setOnFindRestaurants(Runnable action) { findRestaurants.addActionListener(evt -> action.run());}
 
     /** What happens when Profile is clicked (connected in AppBuilder). */
     public void setOnProfile(Runnable action) {

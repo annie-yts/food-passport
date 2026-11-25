@@ -20,10 +20,12 @@ public class Main {
                 .addHomeView()
                 .addProfileView()
                 .addDiscoverDishesView()
+                .addFindRestaurantsView()
                 .addSignupUseCase()
                 .addLoginUseCase()
                 .addLogoutUseCase()
                 .addDiscoverDishesUseCase()
+                .addFindRestaurantsUseCase()
                 .build();
         application.pack();
         application.setLocationRelativeTo(null);
