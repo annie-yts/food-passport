@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.Font;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /* The View when user discover dishes*/
 public class DiscoverDishesView extends JPanel implements DiscoverDishesViewModelListener {
@@ -381,5 +382,19 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
         backButton.setBounds(260, 20, 150, 30);
         backButton.addActionListener(evt -> onClick.run());
         this.add(backButton);
+    }
+
+    /**
+     * Sets what happens when Find Restaurants Nearby is clicked.
+     * The action receives the selected country code, or null if the user searched by dish  name.
+     *
+     * @param onClick the action to run
+     */
+    public void setOnFindRestaurants(Consumer<String> onClick) {
+        viewRestaurants.addActionListener(evt -> {
+            final DiscoverDishesState state = discoverDishesViewModel.getState();
+            final String countryCode = state.getSearchByDish() ? null : state.getSearchTarget();
+            onClick.accept(countryCode);
+        });
     }
 }

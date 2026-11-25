@@ -31,6 +31,13 @@ import use_case.logout.LogoutOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
+import data_access.AreaCountryMappingGateway;
+import data_access.NominatimGeocodingGateway;
+import data_access.OverpassPlacesGateway;
+import interface_adapter.find_restaurants.FindRestaurantsController;
+import interface_adapter.find_restaurants.FindRestaurantsPresenter;
+import interface_adapter.find_restaurants.FindRestaurantsViewModel;
+import use_case.find_restaurants.FindRestaurantsInteractor;
 import view.*;
 
 import javax.swing.*;
@@ -71,6 +78,8 @@ public class AppBuilder {
     private final ApiAccessBoundary mealDbClient = new TheMealDBClient(countryMapping);
     private DiscoverDishesViewModel discoverDishesViewModel;
     private DiscoverDishesView discoverDishesView;
+    private FindRestaurantsViewModel findRestaurantsViewModel;
+    private FindRestaurantsView findRestaurantsView;
 
     public AppBuilder() {
         cardPanel.setLayout(cardLayout);
@@ -99,6 +108,7 @@ public class AppBuilder {
         homeView.setOnWorldMap(() -> JOptionPane.showMessageDialog(homeView, "World Map is coming soon."));
         homeView.setOnDiscover(() -> switchTo(DiscoverDishesViewModel.VIEW_NAME));
         homeView.setOnProfile(() -> switchTo(ProfileViewModel.VIEW_NAME));
+        homeView.setOnFindRestaurants(() -> switchTo(FindRestaurantsViewModel.VIEW_NAME));
 
         cardPanel.add(homeView, HomeViewModel.VIEW_NAME);
         return this;
@@ -171,6 +181,32 @@ public class AppBuilder {
                 new DiscoverDishesInteractor(mealDbClient, presenter);
         final DiscoverDishesController controller = new DiscoverDishesController(interactor);
         discoverDishesView.setDiscoverDishesController(controller);
+        discoverDishesView.setOnFindRestaurants(countryCode -> {
+            if (countryCode != null) {
+                findRestaurantsView.selectCountry(countryCode);
+            }
+            switchTo(FindRestaurantsViewModel.VIEW_NAME);
+        });
+        return this;
+    }
+
+    public AppBuilder addFindRestaurantsView() {
+        findRestaurantsViewModel = new FindRestaurantsViewModel();
+        findRestaurantsView = new FindRestaurantsView(findRestaurantsViewModel, countryMapping.getCountryNamesByCode());
+        findRestaurantsView.setOnBack(() -> switchTo(HomeViewModel.VIEW_NAME));
+        cardPanel.add(findRestaurantsView, FindRestaurantsViewModel.VIEW_NAME);
+        return this;
+    }
+
+    public AppBuilder addFindRestaurantsUseCase() {
+        final FindRestaurantsPresenter presenter = new FindRestaurantsPresenter(findRestaurantsViewModel);
+        final FindRestaurantsInteractor interactor = new FindRestaurantsInteractor(
+                new AreaCountryMappingGateway(countryMapping),
+                new NominatimGeocodingGateway(),
+                new OverpassPlacesGateway(),
+                presenter);
+        final FindRestaurantsController controller = new FindRestaurantsController(interactor);
+        findRestaurantsView.setFindRestaurantsController(controller);
         return this;
     }
 
