@@ -1,10 +1,20 @@
 package app;
 
+import entities.Passport;
+import entities.User;
 import entities.UserFactory;
 import data_access.CountryMapping;
+import data_access.FileCountryListDataAccessObject;
 import data_access.FileUserDataAccessObject;
+import data_access.InMemoryPassportDataAccessObject;
 import data_access.TheMealDBClient;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.add_stamp.AddStampState;
+import interface_adapter.add_stamp.AddStampViewModel;
+import interface_adapter.add_stamp.SearchDishController;
+import interface_adapter.add_stamp.SearchDishPresenter;
+import interface_adapter.add_stamp.StampDishController;
+import interface_adapter.add_stamp.StampDishPresenter;
 import interface_adapter.discover_dishes.DiscoverDishesController;
 import interface_adapter.discover_dishes.DiscoverDishesPresenter;
 import interface_adapter.discover_dishes.DiscoverDishesViewModel;
@@ -28,9 +38,13 @@ import use_case.login.LoginOutputBoundary;
 import use_case.logout.LogoutInputBoundary;
 import use_case.logout.LogoutInteractor;
 import use_case.logout.LogoutOutputBoundary;
+import use_case.search_dish.SearchDishInteractor;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
+import use_case.stamp_dish.CountryListDataAccessInterface;
+import use_case.stamp_dish.StampDishDataAccessInterface;
+import use_case.stamp_dish.StampDishInteractor;
 import view.*;
 
 import javax.swing.*;
@@ -69,6 +83,8 @@ public class AppBuilder {
 
     private final CountryMapping countryMapping = new CountryMapping();
     private final ApiAccessBoundary mealDbClient = new TheMealDBClient(countryMapping);
+    private final StampDishDataAccessInterface passports = new InMemoryPassportDataAccessObject();
+    private final AddStampViewModel addStampViewModel = new AddStampViewModel();
     private DiscoverDishesViewModel discoverDishesViewModel;
     private DiscoverDishesView discoverDishesView;
 
@@ -95,7 +111,7 @@ public class AppBuilder {
         homeViewModel = new HomeViewModel();
         homeView = new HomeView(homeViewModel);
 
-        homeView.setOnAddStamp(() -> JOptionPane.showMessageDialog(homeView, "Add Stamp is coming soon."));
+        homeView.setOnAddStamp(this::openAddStamp);
         homeView.setOnWorldMap(() -> JOptionPane.showMessageDialog(homeView, "World Map is coming soon."));
         homeView.setOnDiscover(() -> switchTo(DiscoverDishesViewModel.VIEW_NAME));
         homeView.setOnProfile(() -> switchTo(ProfileViewModel.VIEW_NAME));
@@ -110,6 +126,40 @@ public class AppBuilder {
         profileView.setOnBack(() -> switchTo(HomeViewModel.VIEW_NAME));
         cardPanel.add(profileView, ProfileViewModel.VIEW_NAME);
         return this;
+    }
+
+    public AppBuilder addStampView() {
+        final CountryListDataAccessInterface countries = new FileCountryListDataAccessObject(countryMapping);
+        final AddStampView view = createStampView(addStampViewModel, mealDbClient, countries, passports);
+        view.addBackToHomeButton(() -> switchTo(HomeViewModel.VIEW_NAME));
+        cardPanel.add(view, AddStampViewModel.VIEW_NAME);
+        return this;
+    }
+
+    static AddStampView createStampView(AddStampViewModel model, ApiAccessBoundary api,
+                                        CountryListDataAccessInterface countries, StampDishDataAccessInterface passports) {
+        final SearchDishInteractor search = new SearchDishInteractor(api, countries, new SearchDishPresenter(model));
+        final StampDishInteractor stamp = new StampDishInteractor(passports, countries, new StampDishPresenter(model));
+        return new AddStampView(model, new SearchDishController(search), new StampDishController(stamp));
+    }
+
+    private void openAddStamp() {
+        final User user = userDataAccessObject.get(userDataAccessObject.getCurrentUsername());
+        if (user == null) {
+            switchTo(LoginViewModel.VIEW_NAME);
+            return;
+        }
+        if (!user.getUserId().equals(addStampViewModel.getState().getUserId())) {
+            final Passport passport = passports.getPassport(user.getUserId());
+            final AddStampState state = new AddStampState();
+            state.setUserId(user.getUserId());
+            state.setCountries(countryMapping.getCountryNamesByCode());
+            state.setPassportSummary(passport.getStamps().size(), passport.countriesTried().size());
+            state.setClearForm(true);
+            addStampViewModel.setState(state);
+            addStampViewModel.notifyStateChanged();
+        }
+        switchTo(AddStampViewModel.VIEW_NAME);
     }
 
     /** Shows the screen with the given view name. */

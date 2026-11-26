@@ -7,6 +7,7 @@ import java.util.List;
  * The view model for the Add Stamp screen.
  */
 public class AddStampViewModel {
+    public static final String VIEW_NAME = "add stamp";
     public static final String TITLE_LABEL = "Add Stamp";
     public static final String SEARCH_BUTTON_LABEL = "Search";
     public static final String MANUAL_LABEL = "Enter manually";

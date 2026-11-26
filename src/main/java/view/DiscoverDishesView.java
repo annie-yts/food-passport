@@ -377,7 +377,7 @@ public class DiscoverDishesView extends JPanel implements DiscoverDishesViewMode
     }
 
     public void addBackToProfileButton(Runnable onClick) {
-        JButton backButton = new JButton("Back to Profile");
+        JButton backButton = new JButton("Back to Home");
         backButton.setBounds(260, 20, 150, 30);
         backButton.addActionListener(evt -> onClick.run());
         this.add(backButton);

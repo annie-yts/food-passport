@@ -31,8 +31,7 @@ public class StampDishPresenter implements StampDishOutputBoundary {
 
         state.setSuccessMessage(message);
         state.setErrorMessage("");
-        state.setPassportSummary("Passport: " + outputData.getTotalStamps() + " stamps · "
-                + outputData.getTotalCountries() + " countries");
+        state.setPassportSummary(outputData.getTotalStamps(), outputData.getTotalCountries());
         state.setClearForm(true);
 
         viewModel.notifyStateChanged();
