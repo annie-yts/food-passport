@@ -74,8 +74,8 @@ public class AddStampState {
         this.successMessage = successMessage;
     }
 
-    public void setPassportSummary(String passportSummary) {
-        this.passportSummary = passportSummary;
+    public void setPassportSummary(int stamps, int countriesTried) {
+        this.passportSummary = "Passport: " + stamps + " stamps · " + countriesTried + " countries";
     }
 
     public void setClearForm(boolean clearForm) {

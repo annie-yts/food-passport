@@ -18,6 +18,7 @@ public class Main {
                 .addLoginView()
                 .addSignupView()
                 .addHomeView()
+                .addStampView()
                 .addProfileView()
                 .addDiscoverDishesView()
                 .addSignupUseCase()

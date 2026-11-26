@@ -81,6 +81,12 @@ public class AddStampView extends JPanel implements AddStampViewModelListener {
         stateChanged();
     }
 
+    public void addBackToHomeButton(Runnable onBack) {
+        JButton back = new JButton("Back to Home");
+        back.addActionListener(e -> onBack.run());
+        add(row(back), 0);
+    }
+
     private void buildLayout() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
@@ -263,8 +269,10 @@ public class AddStampView extends JPanel implements AddStampViewModelListener {
         return suggestions.get(index);
     }
 
-    /** Empties the form after a successful save, ready for the next dish. */
+    /** Clears the previous entry after a save or a change of user. */
     private void clearForm() {
+        searchField.setText("");
+        countryBox.setSelectedIndex(countryCodes.isEmpty() ? -1 : 0);
         suggestionList.clearSelection();
         manualCheckBox.setSelected(false);
         viewModel.getState().setManualMode(false);
